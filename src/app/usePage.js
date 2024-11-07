@@ -9,6 +9,7 @@ const usePage = () => {
     const { register, handleSubmit } = useForm()
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [users, setUsers] = useState([])
+    const [userLoged, setUserLoged] = useState([])
 
     useEffect(() => {
         getUsers()
@@ -38,7 +39,11 @@ const usePage = () => {
                 id: loadingToast
             });
             setTimeout(() => {
-                router.push('/Home')
+                if (user.rol === 'admin') {
+                    router.push(`/Home?id=${user.id}`);
+                } else if (user.rol === 'cliente') {
+                    router.push(`/Preguntas?id=${user.id}`);
+                }
             }, 2000);
         } else {
             toast.error('Usuario no encontrado')
