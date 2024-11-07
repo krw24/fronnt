@@ -1,8 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation";
+import { toast } from 'react-hot-toast';
 
 const usePage = () => {
+    const router = useRouter()
     const { register, handleSubmit } = useForm()
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [users, setUsers] = useState([])
@@ -28,12 +31,17 @@ const usePage = () => {
 
     const onSubmit = (data) => {
         const { email, password } = data
-
+        const loadingToast = toast.loading('Verificando usuario...');
         const user = users.find(user => user.email === email && user.password === password)
         if (user) {
-            console.log('Usuario encontrado:', user)
+            toast.success('Bienvenido ' + user.name, {
+                id: loadingToast
+            });
+            setTimeout(() => {
+                router.push('/Home')
+            }, 2000);
         } else {
-            console.log('Usuario no encontrado')
+            toast.error('Usuario no encontrado')
         }
     }
 

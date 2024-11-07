@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2'
+import { toast } from 'react-hot-toast';
 
 const useHome = () => {
 
@@ -14,17 +15,21 @@ const useHome = () => {
   
   const [editCliente, setEditCliente] = useState({
     id: '',
-    nombre: '',
-    descripcion: '',
-    precio: '',
-    cantidad: ''
+    name: '',
+    address: '',
+    contact: '',
+    email: '',  
+    password: '',
+    role: ''
   }); 
   
   const [newCliente, setNewCliente] = useState({
-    nombre: '',
-    descripcion: '',
-    precio: '',
-    cantidad: ''
+    name: '',
+    address: '',
+    contact: '',
+    email: '',
+    password: '',
+    role: ''
   });
 
     useEffect(() => {
@@ -38,12 +43,15 @@ const useHome = () => {
 
   useEffect(() => {
     const resultados = clientes.filter(cliente =>
-      cliente.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      cliente.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
+      cliente.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      cliente.email?.toLowerCase().includes(busqueda.toLowerCase())
     );
     setClientesFiltrados(resultados);
   }, [busqueda, clientes]);
 
+  useEffect(()=>{
+    console.log('clientesFiltrados', clientesFiltrados)
+  },[clientesFiltrados])
 
   const getDataInit = async () => {
     try {
@@ -82,6 +90,7 @@ const useHome = () => {
 
       if (!response.ok) {
         alertError();
+        toast.error(error.message,'Error al agregar cliente');
         throw new Error('Error al agregar cliente: ' + response.statusText);
       }
 
@@ -89,7 +98,8 @@ const useHome = () => {
       setRefreshData(!refreshData);
       const result = await response.json();
       setClientes([...clientes, result]);
-      setNewCliente({ nombre: '', descripcion: '', precio: '', cantidad: '' }); 
+      toast.success('Usuario agregado correctamente');
+      setNewCliente({ name: '', address: '', contact: '', email: '', password: '', role: '' }); 
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error al agregar cliente:', error);
@@ -101,10 +111,12 @@ const useHome = () => {
     e.preventDefault();
     const updatedCliente = {
       id: editCliente.id,
-      nombre: editCliente.nombre,
-      descripcion: editCliente.descripcion,
-      precio: editCliente.precio, 
-      cantidad: editCliente.cantidad
+      name: editCliente.name,
+      address: editCliente.address,
+      contact: editCliente.contact,
+      email: editCliente.email,
+      password: editCliente.password, 
+      role: editCliente.role
     };
     try {
       const response = await fetch(`http://localhost:3001/usuarios/${editCliente.id}`, {
@@ -116,18 +128,22 @@ const useHome = () => {
       });
       if (response.ok) {
         setIsEditModalOpen(false);
+        toast.success('Usuario actualizado correctamente');
         setEditCliente({
           id: '',
-          nombre: '',
-          descripcion: '',
-          precio: '', 
-          cantidad: ''
+          name: '',
+          address: '',
+          contact: '',
+          email: '',
+          password: '',
+          role: ''
         });
         alertUpdate();
         setRefreshData(!refreshData);
         // setBusqueda('');
       } else {
         alertError();
+        toast.error(error.message,'Error al actualizar cliente');
       }
     } catch (error) {
       console.error('Error al actualizar el cliente:', error);
@@ -144,7 +160,6 @@ const useHome = () => {
       });
       if (response.ok) {  
         setRefreshData(!refreshData);
-        console.log('Cliente eliminado correctamente');
       } else {
         console.error('Error al eliminar el cliente');
       }
@@ -174,7 +189,7 @@ const useHome = () => {
   /* ---------- alertas----------- */
 
   // alerta de eliminación  
-  const alertDelete = (id, nombre) => {
+  const alertDelete = (id, name) => {
     Swal.fire({
     title: "¿Estás seguro? ",
     text: "Esta acción es irreversible. ¿Quieres continuar?",
@@ -188,7 +203,7 @@ const useHome = () => {
           handleDeleteCliente(id)
           Swal.fire({
               title: "Eliminado!",
-              text: `El cliente (${nombre}) ha sido eliminado.`,
+              text: `El cliente ${name} ha sido eliminado.`,
               icon: "success"
           });
       }
@@ -226,7 +241,7 @@ const useHome = () => {
    // paginador
   // ... otros estados ...
   const [paginaActual, setPaginaActual] = useState(1);
-  const productosPorPagina = 8; // Ajusta este número según necesites
+  const productosPorPagina = 10; // Ajusta este número según necesites
 
   // Calcular productos para la página actual
   const indiceUltimo = paginaActual * productosPorPagina;
