@@ -1,9 +1,10 @@
 'use client'
 
 import { FiSearch, FiLogOut } from "react-icons/fi";
-
+import useQuestions from "./useQuestions";
 
 const Preguntas = () => {
+    const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions()
     return (
         <div className="w-full h-screen flex flex-col relative">
             <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-200">
@@ -12,12 +13,14 @@ const Preguntas = () => {
                 </div>
                 <div className=" flex items-center flex-row gap-2">
                     <div className="w-72 flex items-center gap-2 justify-center">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                            logo
+                        <div className="w-12 h-12 bg-white border-[1px] border-indigo-500 rounded-full flex items-center justify-center">
+                        <span className="text-3xl font-bold text-indigo-500">
+                                {userLoged?.name?.charAt(0).toUpperCase()}
+                            </span>
                         </div>
                         <div className="flex flex-row gap-2">
                             <div className="text-lg font-semibold">
-                                Juanes Espinosa
+                                {userLoged.name}
                             </div>
                             <div onClick={() => {
                                 localStorage.removeItem('token');
@@ -68,11 +71,12 @@ const Preguntas = () => {
                     </div>
                 </div>
             </div>
-            <div className="absolute flex flex-col bottom-0 right-10 w-[400px] h-[550px] border-[1px] border-slate-500 rounded-t-xl">
-                {/* Header del chat */}
-                <div className="w-full h-[60px] flex justify-between items-center px-4 bg-slate-500 rounded-t-xl">
+            {chatIsOpen ? (
+                <div className="absolute flex flex-col bottom-0 right-10 w-[400px] h-[550px] border-[1px] rounded-t-xl">
+                    {/* Header del chat */}
+                    <div className="w-full h-[60px] flex justify-between items-center px-4 bg-indigo-500 rounded-t-xl">
                     <h3 className="text-white font-medium">Chat de Ayuda</h3>
-                    <button className="hover:bg-slate-400 p-1 rounded-full transition-colors">
+                    <button onClick={() => setChatIsOpen(false)} className="hover:bg-slate-300 p-1 rounded-full transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 text-white">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
@@ -84,22 +88,29 @@ const Preguntas = () => {
                     {/* Aquí irán los mensajes */}
                 </div>
 
-                {/* Input para escribir mensajes */}
-                <div className="p-4 border-t bg-white">
-                    <div className="flex gap-2">
-                        <input
+                    {/* Input para escribir mensajes */}
+                    <div className="p-4 border-t bg-white">
+                        <div className="flex gap-2">
+                            <input
                             type="text"
                             placeholder="Escribe tu mensaje..."
                             className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <button className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                            </svg>
-                        </button>
+                            <button className="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            ) : 
+                <div className="absolute flex flex-col bottom-3 right-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-10 text-indigo-500 cursor-pointer" onClick={() => setChatIsOpen(true)}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                    </svg>
+                </div>
+            }
         </div>
     )
 }
