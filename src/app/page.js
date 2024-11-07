@@ -48,7 +48,7 @@ export default function Home() {
           </div>
         </form>
         <div className="w-full flex flex-col pt-3 gap-3">
-          <div className="w-full flex justify-center font-semibold">No estas registrado?</div>
+          <div className="w-full flex justify-center font-semibold">¿No estas registrado?</div>
           <div className="w-full flex justify-center px-2 font-medium">
             <Link href="/register" className="bg-indigo-400 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg cursor-pointer">
               registrarse
