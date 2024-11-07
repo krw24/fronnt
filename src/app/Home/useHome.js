@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2'
 import { toast } from 'react-hot-toast';
+import { useSearchParams } from "next/navigation";
 
 const useHome = () => {
 
@@ -12,7 +13,8 @@ const useHome = () => {
   const [busqueda, setBusqueda] = useState('');
   const [clientesFiltrados, setClientesFiltrados] = useState(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const searchParams = useSearchParams();
+  const [userLoged, setUserLoged] = useState([]);
   const [editCliente, setEditCliente] = useState({
     id: '',
     name: '',
@@ -34,11 +36,16 @@ const useHome = () => {
 
     useEffect(() => {
         getDataInit();
+        getUserLoged();
     }, []);
   
     useEffect(() => {
       getDataInit();
     }, [refreshData]);
+
+    useEffect(() => {
+      console.log('userLoged', userLoged)
+    }, [userLoged])
   
 
   useEffect(() => {
@@ -52,6 +59,32 @@ const useHome = () => {
   useEffect(()=>{
     console.log('clientesFiltrados', clientesFiltrados)
   },[clientesFiltrados])
+
+  const getUserLoged = async () => {
+    const id = searchParams.get('id');
+    console.log('id', id)
+    try {
+        const response = await fetch('http://localhost:3001/usuarios');
+        
+        if (!response.ok) {
+            throw new Error('Error al obtener usuarios');
+        }
+
+        const usuarios = await response.json();
+
+        const usuarioEncontrado = usuarios.find(user => user.id === Number(id));
+        
+        if (!usuarioEncontrado) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        setUserLoged(usuarioEncontrado);
+    } catch (error) {
+        console.error('Error al obtener usuario:', error);
+        toast.error('Error al obtener información del usuario');
+        setUserLoged({});
+    }
+  }
 
   const getDataInit = async () => {
     try {
