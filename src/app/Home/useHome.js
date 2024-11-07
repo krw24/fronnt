@@ -12,6 +12,91 @@ const useHome = () => {
   const [busqueda, setBusqueda] = useState('');
   const [clientesFiltrados, setClientesFiltrados] = useState(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+    let preguntas = [
+        {
+            id: 1,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 2,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 3,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 4,
+            user_id: 4,
+            support_name: 'carlos andres',
+            description: '¿como puedo registrarme?',
+            support_response: '',
+            status: 'pendiente'
+        },
+        {
+            id: 5,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 6,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 7,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 8,
+            user_id: 4,
+            support_name: 'carlos andres',
+            description: '¿como puedo registrarme?',
+            support_response: '',
+            status: 'pendiente'
+        },
+        {
+            id: 9,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        },
+        {
+            id: 10,
+            user_id: 1,
+            support_name: 'Juan Perez',
+            description: '¿Como puedo cancelar mi suscripción?',
+            support_response: 'Para cancelar tu suscripción, por favor sigue estos pasos: 1. Ingresa a tu cuenta en nuestro sitio web. 2. Navega a la sección de ',
+            status: 'contestada'
+        }
+    ];
+
   
   const [editCliente, setEditCliente] = useState({
     id: '',
@@ -22,6 +107,15 @@ const useHome = () => {
     password: '',
     role: ''
   }); 
+
+  const [editPregunta, setEditPregunta] = useState({
+    id: '',
+    user_id: '',
+    support_name: '',
+    description: '',
+    support_response: '',
+    status: ''
+  });
   
   const [newCliente, setNewCliente] = useState({
     name: '',
@@ -106,6 +200,29 @@ const useHome = () => {
     }
   };  
 
+  const handleUpdatePregunta = async (e) => {
+    e.preventDefault();
+    const updatedPregunta = {
+      id: editPregunta.id,
+      user_id: editPregunta.user_id,
+      support_name: editPregunta.support_name,
+      description: editPregunta.description,
+      support_response: editPregunta.support_response,
+      status: editPregunta.status
+    };
+    try {
+      const response = await fetch(`http://localhost:3001/preguntas/${editPregunta.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedPregunta)
+      });
+    } catch (error) {
+      console.error('Error al actualizar la pregunta:', error);
+    }
+  }
+
 
   const handleUpdateCliente = async (e) => {
     e.preventDefault();
@@ -173,6 +290,12 @@ const useHome = () => {
     setIsEditModalOpen(true);
     const cliente = clientes.find(cliente => cliente.id === id);
     setEditCliente(cliente);
+  } 
+
+  const handleEditPregunta = (id) => {
+    setIsEditModalOpen(true);
+    const pregunta = preguntas.find(pregunta => pregunta.id === id);
+    setEditPregunta(pregunta);
   } 
 
     
@@ -279,7 +402,14 @@ const useHome = () => {
       clientesActuales,
       paginaActual,
       cambiarPagina,
-      totalPaginas
+      totalPaginas,
+
+      // preguntas
+      preguntas,
+      handleEditPregunta,
+      editPregunta,
+      setEditPregunta,
+      handleUpdatePregunta
     }
 }
 
