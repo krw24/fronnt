@@ -222,6 +222,26 @@ const useHome = () => {
     });
   }
 
+
+   // paginador
+  // ... otros estados ...
+  const [paginaActual, setPaginaActual] = useState(1);
+  const productosPorPagina = 8; // Ajusta este número según necesites
+
+  // Calcular productos para la página actual
+  const indiceUltimo = paginaActual * productosPorPagina;
+  const indicePrimero = indiceUltimo - productosPorPagina;
+  const clientesActuales = clientesFiltrados.slice(indicePrimero, indiceUltimo);
+  const totalPaginas = Math.ceil(clientesFiltrados.length / productosPorPagina);
+
+  const cambiarPagina = (numeroPagina) => {
+    setPaginaActual(numeroPagina);
+  };
+
+
+
+
+
     return {
       clientes,
       formatText,
@@ -240,7 +260,11 @@ const useHome = () => {
       busqueda,
       setBusqueda,
       clientesFiltrados,
-      alertDelete
+      alertDelete,
+      clientesActuales,
+      paginaActual,
+      cambiarPagina,
+      totalPaginas
     }
 }
 
