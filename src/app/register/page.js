@@ -3,7 +3,7 @@ import Link from "next/link";
 import useRegister from "./useRegister";
 
 const register = () =>{
-    const { register, handleSubmit, onSubmit, isPasswordVisible, togglePasswordVisibility } = useRegister();
+    const { register, handleSubmit, onSubmit, isPasswordVisible, togglePasswordVisibility} = useRegister();
     return (
         <div className="w-full h-screen bg-slate-50 flex justify-center items-center">
       <div className="w-[400px] bg-white flex flex-col rounded-xl py-12 px-3 gap-4 shadow-lg">
@@ -13,7 +13,7 @@ const register = () =>{
             type="text"
             placeholder="Nombre"
             className="w-full h-11 outline-none rounded-md border-b-[1px] px-3"    
-            {...register("nombre")}
+            {...register("name")}
           />
           <input 
             type="email"
@@ -25,13 +25,13 @@ const register = () =>{
             type="tel"
             placeholder="Contacto"
             className="w-full h-11 outline-none rounded-md border-b-[1px] px-3"    
-            {...register("contacto")}
+            {...register("contact")}
           />
           <input 
             type="text"
             placeholder="Dirección"
             className="w-full h-11 outline-none rounded-md border-b-[1px] px-3"    
-            {...register("direccion")}
+            {...register("address")}
           />
           <div className="relative">
             <input 
