@@ -71,6 +71,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
       });
 
       const data = await response.json();
+      console.log("data", data);
       const newChatId = data.id;
       setChatId(newChatId);
       await verificarAgenteAsignado(newChatId);
