@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react"; 
+import { useState } from "react"; 
 import { FiSearch, FiLogOut } from "react-icons/fi";
 import useQuestions from "./useQuestions";
 import useChatClient from "./useChatClient";
@@ -9,11 +9,15 @@ import { Toaster } from "react-hot-toast";
 import { TiMessages } from "react-icons/ti";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import Modal from "../../components/modal/Modal.js"
-import usePreguntas from "./usePreguntas";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { MdEdit } from "react-icons/md";
+import { IoMdEye } from "react-icons/io";
 
 const Preguntas = () => {
+
+
+  const [view, setView] = useState(0);
+  
+  
   const { 
     userLoged, 
     chatIsOpen, 
@@ -23,10 +27,7 @@ const Preguntas = () => {
     register ,
 
 
-    preguntas,
     formatText,
-    isModalOpen,
-    setIsModalOpen,
     handleEditPregunta,
     isEditModalOpen,
     setIsEditModalOpen,
@@ -34,14 +35,12 @@ const Preguntas = () => {
     setEditPregunta,
     busqueda,
     setBusqueda,
-    preguntasFiltradas,
     preguntasActuales,
     paginaActual,
     cambiarPagina,
     totalPaginas
-  } = useQuestions();
+  } = useQuestions({view});
 
-  const [view, setView] = useState(0);
   const chatLogic = useChatClient(userLoged, chatIsOpen);
 
   const SkeletonCell = () => {
@@ -205,7 +204,7 @@ const Preguntas = () => {
                                                         <button
                                                             onClick={() => handleEditPregunta(pregunta.id)}
                                                             className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full">
-                                                            <MdEdit />
+                                                            <IoMdEye />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -283,7 +282,7 @@ const Preguntas = () => {
                                         <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
                                         <form
                                             className="w-[500px] flex flex-col justify-center gap-4"
-                                            onSubmit={handleUpdatePregunta}>
+                                            >
                                             
                                             <div className="relative ">
                                                 <textarea
@@ -305,8 +304,8 @@ const Preguntas = () => {
                                                 <textarea
                                                     id="description"
                                                     rows={4}
-                                                    disabled={statePregunta != 'pendiente' ? true : false}
-                                                    className={`${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''} min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer`}
+                                                    disabled={true}
+                                                    className={`cursor-not-allowed min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer`}
                                                     placeholder=" "
                                                     value={editPregunta?.support_response || ''}
                                                     onChange={(e) => setEditPregunta({ ...editPregunta, support_response: e.target.value })}
@@ -321,15 +320,10 @@ const Preguntas = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => setIsEditModalOpen(false)}
-                                                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-md">
-                                                    Cancelar
+                                                    className="bg-indigo-500 text-white font-bold py-2 px-4 rounded-md">
+                                                    Salir
                                                 </button>
-                                                <button
-                                                    disabled={statePregunta != 'pendiente' ? true : false}
-                                                    type="submit"
-                                                    className={`bg-blue-500 text-white font-bold py-2 px-4 rounded-md ${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''}`}>
-                                                    Enviar respuesta
-                                                </button>
+
                                             </div>
                                         </form>
                                     </Modal>

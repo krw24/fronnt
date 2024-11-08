@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { toast } from 'react-hot-toast';
 
 export const useChatAdmin = (role, userLoged) => {
   const [chats, setChats] = useState([]);
@@ -6,9 +7,9 @@ export const useChatAdmin = (role, userLoged) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [lastUpdate, setLastUpdate] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(new Date().toISOString());
 
-  const API_BASE = "http://localhost:3001";
+  const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
   // Función para manejar errores de fetch
   const handleFetchError = async (response) => {
@@ -19,41 +20,50 @@ export const useChatAdmin = (role, userLoged) => {
     return response.json();
   };
 
-  // Obtener todos los chats según el rol con retry
-  const fetchChats = async (retryCount = 3) => {
-    setLoading(true);
+  // Función optimizada para obtener chats
+  const fetchChats = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/chats`);
-
+      const endpoint = `${API_BASE}/chats/updates?last_update=${lastUpdate}`;
+      const response = await fetch(endpoint);
       const data = await handleFetchError(response);
 
-      setChats(
-        data
-          .map((chat) => ({
-            ...chat,
-            lastMessageTime: new Date(
-              chat.last_message_time || chat.created_at
-            ).getTime(),
-          }))
-          .sort((a, b) => b.lastMessageTime - a.lastMessageTime)
-      );
+      if (data.chats) {
+        setChats(prevChats => {
+          const updatedChats = [...prevChats];
+          
+          data.chats.forEach(newChat => {
+            const index = updatedChats.findIndex(c => c.id === newChat.id);
+            if (index >= 0) {
+              // Actualizar chat existente
+              updatedChats[index] = {
+                ...updatedChats[index],
+                ...newChat,
+                lastMessageTime: new Date(newChat.last_message_at || newChat.created_at).getTime()
+              };
+            } else {
+              // Agregar nuevo chat
+              updatedChats.unshift({
+                ...newChat,
+                lastMessageTime: new Date(newChat.last_message_at || newChat.created_at).getTime()
+              });
+            }
+          });
 
-      setLastUpdate(new Date());
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching chats:", err);
-      if (retryCount > 0) {
-        setTimeout(() => fetchChats(retryCount - 1), 1000);
-      } else {
-        setError("Error al cargar los chats. Por favor, intente nuevamente.");
+          // Ordenar por último mensaje
+          return updatedChats.sort((a, b) => b.lastMessageTime - a.lastMessageTime);
+        });
+
+        setLastUpdate(new Date().toISOString());
+        setError(null);
       }
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching chats:', err);
+      setError('Error al cargar los chats');
     }
-  };
+  }, [API_BASE, lastUpdate]);
 
-  // Obtener mensajes con retry y manejo de errores mejorado
-  const fetchMessages = useCallback(async (chatId, retryCount = 3) => {
+  // Función para obtener mensajes
+  const fetchMessages = useCallback(async (chatId) => {
     if (!chatId) return;
 
     try {
@@ -62,77 +72,20 @@ export const useChatAdmin = (role, userLoged) => {
       setMessages(data);
       setError(null);
     } catch (err) {
-      console.error("Error fetching messages:", err);
-      if (retryCount > 0) {
-        setTimeout(() => fetchMessages(chatId, retryCount - 1), 1000);
-      } else {
-        setError(
-          "Error al cargar los mensajes. Por favor, intente nuevamente."
-        );
-      }
+      console.error('Error fetching messages:', err);
+      setError('Error al cargar los mensajes');
     }
-  }, []);
+  }, [API_BASE]);
 
-  // Asignar chat con validación mejorada
-  // ... resto del código ...
-
-  const assignChat = async (chatId) => {
-    if (!userLoged?.id) {
-      setError("No hay usuario logueado para asignar el chat");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE}/chat/${chatId}/assign`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          support_id: userLoged.id, // Aquí estaba el error, estaba hardcodeado a 1
-          support_name: userLoged.name,
-        }),
-      });
-
-      const data = await handleFetchError(response);
-
-      if (data.success) {
-        setSelectedChat((prev) => ({
-          ...prev,
-          support_id: userLoged.id,
-          support_name: userLoged.name,
-        }));
-        await fetchChats(); // Actualizar la lista de chats
-      } else {
-        setError(data.message || "Error al asignar el chat");
-      }
-    } catch (err) {
-      setError("Error al asignar el chat. Por favor, intente nuevamente.");
-      console.error(err);
-    }
-  };
-
-  // Modificar handleSelectChat para manejar mejor la asignación
-  const handleSelectChat = async (chat) => {
-    setSelectedChat(chat);
-    await fetchMessages(chat.id);
-
-    if (role === "support" && !chat.support_id) {
-      console.log("Intentando asignar chat:", chat.id, "a usuario:", userLoged);
-      await assignChat(chat.id);
-    }
-    await markChatAsRead(chat.id);
-  };
-
-  // Enviar mensaje con retry
-  const sendMessage = async (chatId, message, retryCount = 3) => {
-    if (!message.trim()) return;
+  // Función para enviar mensajes
+  const sendMessage = async (chatId, message) => {
+    if (!message.trim() || !chatId) return;
 
     try {
       const response = await fetch(`${API_BASE}/chat/${chatId}/messages`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           sender_id: userLoged.id,
@@ -141,67 +94,181 @@ export const useChatAdmin = (role, userLoged) => {
         }),
       });
 
-      await handleFetchError(response);
-      await fetchMessages(chatId);
+      const data = await handleFetchError(response);
+      
+      // Actualizar mensajes localmente
+      setMessages(prev => [...prev, {
+        id: data.id,
+        chat_id: chatId,
+        message: message.trim(),
+        sender_id: userLoged.id,
+        sender_name: userLoged.name,
+        created_at: new Date().toISOString(),
+      }]);
+
+      // Actualizar el chat en la lista
+      setChats(prevChats => {
+        return prevChats.map(chat => {
+          if (chat.id === chatId) {
+            return {
+              ...chat,
+              last_message: message.trim(),
+              last_message_at: new Date().toISOString(),
+              lastMessageTime: new Date().getTime(),
+            };
+          }
+          return chat;
+        }).sort((a, b) => b.lastMessageTime - a.lastMessageTime);
+      });
+
       setError(null);
     } catch (err) {
-      console.error("Error sending message:", err);
-      if (retryCount > 0) {
-        setTimeout(() => sendMessage(chatId, message, retryCount - 1), 1000);
-      } else {
-        setError("Error al enviar el mensaje. Por favor, intente nuevamente.");
+      console.error('Error sending message:', err);
+      toast.error('Error al enviar el mensaje');
+    }
+  };
+
+  // Función para transferir chat
+  const transferChat = async (chatId, newAgentId) => {
+    try {
+      const response = await fetch(`${API_BASE}/chat/${chatId}/transfer`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          new_support_id: newAgentId,
+        }),
+      });
+
+      const data = await handleFetchError(response);
+      if (data.success) {
+        await fetchChats();
+        setSelectedChat(null);
+        toast.success('Chat transferido exitosamente');
+        return true;
+      }
+      throw new Error(data.message || 'Error al transferir el chat');
+    } catch (error) {
+      console.error('Error en transferChat:', error);
+      toast.error('Error al transferir el chat');
+      throw error;
+    }
+  };
+
+  // Función para convertir a ticket
+  const convertToTicket = async (chatId) => {
+    try {
+      const response = await fetch(`${API_BASE}/chat/${chatId}/convert-ticket`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          user_id: userLoged.id,
+        }),
+      });
+
+      const data = await handleFetchError(response);
+      if (data.success) {
+        toast.success('Chat convertido a ticket exitosamente');
+        return true;
+      }
+      throw new Error(data.message || 'Error al convertir a ticket');
+    } catch (error) {
+      console.error('Error en convertToTicket:', error);
+      toast.error('Error al convertir a ticket');
+      throw error;
+    }
+  };
+
+  // Función para cerrar chat
+  const closeChat = async (chatId) => {
+    try {
+      const response = await fetch(`${API_BASE}/chat/close/${chatId}`, {
+        method: 'PATCH',
+      });
+      await handleFetchError(response);
+      setSelectedChat(null);
+      await fetchChats();
+      toast.success('Chat cerrado exitosamente');
+    } catch (err) {
+      console.error('Error closing chat:', err);
+      toast.error('Error al cerrar el chat');
+    }
+  };
+
+  // Función para seleccionar chat
+  const handleSelectChat = async (chat) => {
+    setSelectedChat(chat);
+    await fetchMessages(chat.id);
+    
+    if (role === 'support' && !chat.support_id) {
+      try {
+        const response = await fetch(`${API_BASE}/chat/${chat.id}/assign`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            support_id: userLoged.id,
+            support_name: userLoged.name,
+          }),
+        });
+        
+        const data = await handleFetchError(response);
+        if (data.success) {
+          setSelectedChat(prev => ({
+            ...prev,
+            support_id: userLoged.id,
+            support_name: userLoged.name,
+          }));
+          await fetchChats();
+        }
+      } catch (err) {
+        console.error('Error assigning chat:', err);
+        toast.error('Error al asignar el chat');
       }
     }
   };
 
-  // Nuevas funciones agregadas
-  const markChatAsRead = async (chatId) => {
-    try {
-      await fetch(`${API_BASE}/chat/${chatId}/read`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ support_id: userLoged.id }),
-      });
-    } catch (err) {
-      console.error("Error marking chat as read:", err);
-    }
-  };
-
-  const transferChat = async (chatId, newSupportId) => {
-    try {
-      const response = await fetch(`${API_BASE}/chat/${chatId}/transfer`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ new_support_id: newSupportId }),
-      });
-
-      await handleFetchError(response);
-      setSelectedChat(null);
-      await fetchChats();
-    } catch (err) {
-      setError("Error al transferir el chat");
-      console.error(err);
-    }
-  };
-
-  // Efectos mejorados
+  // Efecto para actualización periódica
   useEffect(() => {
-    fetchChats();
-    const interval = setInterval(fetchChats, 5000); // Actualizar cada 5 segundos
-    return () => clearInterval(interval);
-  }, [role, userLoged?.id]);
+    let interval;
+    
+    if (!loading) {
+      // Actualización inicial
+      fetchChats();
+      
+      // Configurar intervalo de actualización
+      interval = setInterval(() => {
+        fetchChats();
+      }, 5000); // Actualizar cada 5 segundos
+    }
 
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [loading, fetchChats]);
+
+  // Efecto para actualización de mensajes
   useEffect(() => {
+    let interval;
+    
     if (selectedChat?.id) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         fetchMessages(selectedChat.id);
-      }, 2000); // Actualizar cada 2 segundos
-      return () => clearInterval(interval);
+      }, 3000); // Actualizar mensajes cada 3 segundos
     }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [selectedChat?.id, fetchMessages]);
 
   return {
@@ -210,24 +277,11 @@ export const useChatAdmin = (role, userLoged) => {
     messages,
     loading,
     error,
-    lastUpdate,
     handleSelectChat,
     sendMessage,
-    closeChat: async (chatId) => {
-      try {
-        const response = await fetch(`${API_BASE}/chat/close/${chatId}`, {
-          method: "PATCH",
-        });
-        await handleFetchError(response);
-        setSelectedChat(null);
-        await fetchChats();
-      } catch (err) {
-        setError("Error al cerrar el chat");
-        console.error(err);
-      }
-    },
+    closeChat,
     transferChat,
-    markChatAsRead,
+    convertToTicket,
     refreshChats: fetchChats,
   };
 };
