@@ -46,6 +46,7 @@ const usePage = () => {
                 }
             }, 2000);
         } else {
+            toast.dismiss(loadingToast)
             toast.error('Usuario no encontrado')
         }
     }
