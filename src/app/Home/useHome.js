@@ -1,92 +1,88 @@
-'use client'
+"use client";
 import { useEffect, useState } from "react";
-import Swal from 'sweetalert2'
-import { toast } from 'react-hot-toast';
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 import { useSearchParams } from "next/navigation";
 
 const useHome = () => {
-
   const [clientes, setClientes] = useState([]);
   const [preguntas, setPreguntas] = useState([]);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [refreshData, setRefreshData] = useState(false);
   const [refreshDataPreguntas, setRefreshDataPreguntas] = useState(false);
-  const [busqueda, setBusqueda] = useState('');
+  const [busqueda, setBusqueda] = useState("");
   const [clientesFiltrados, setClientesFiltrados] = useState(clientes);
   const [preguntasFiltradas, setPreguntasFiltradas] = useState(preguntas);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const searchParams = useSearchParams();
   const [userLoged, setUserLoged] = useState([]);
-  const [estadoSeleccionado, setEstadoSeleccionado] = useState('');
-  const [statePregunta, setStatePregunta] = useState('');
+  const [estadoSeleccionado, setEstadoSeleccionado] = useState("");
+  const [statePregunta, setStatePregunta] = useState("");
 
   // Nuevos estados para la facturación
   const [facturaData, setFacturaData] = useState({
-    numeroFactura: '',
-    fecha: new Date().toISOString().split('T')[0],
+    numeroFactura: "",
+    fecha: new Date().toISOString().split("T")[0],
     cliente: {
-      id: '',
-      nombre: '',
-      direccion: '',
-      telefono: ''
+      id: "",
+      nombre: "",
+      direccion: "",
+      telefono: "",
     },
     items: [],
     subtotal: 0,
     impuestos: 0,
-    total: 0
+    total: 0,
   });
 
   const [nuevoItem, setNuevoItem] = useState({
-    descripcion: '',
+    descripcion: "",
     cantidad: 0,
     precioUnitario: 0,
-    total: 0
+    total: 0,
   });
-
 
   useEffect(() => {
     if (estadoSeleccionado == 0) {
-      setBusqueda('')
+      setBusqueda("");
     }
-    if (estadoSeleccionado == '1') {
-      setBusqueda('preguntas')
+    if (estadoSeleccionado == "1") {
+      setBusqueda("preguntas");
     }
-    if (estadoSeleccionado == '2') {
-      setBusqueda('quejas')
+    if (estadoSeleccionado == "2") {
+      setBusqueda("quejas");
     }
-    if (estadoSeleccionado == '3') {
-      setBusqueda('reclamos')
+    if (estadoSeleccionado == "3") {
+      setBusqueda("reclamos");
     }
-  }, [estadoSeleccionado])
-
-
+  }, [estadoSeleccionado]);
 
   const [editCliente, setEditCliente] = useState({
-    id: '',
-    name: '',
-    address: '',
-    contact: '',
-    email: '',
-    password: '',
-    role: ''
+    id: "",
+    name: "",
+    address: "",
+    contact: "",
+    email: "",
+    password: "",
+    role: "",
   });
 
   const [editPregunta, setEditPregunta] = useState({
-    id: '',
-    status: '',
-    support_response: '',
-    support_id: '',
-    support_name: ''
+    id: "",
+    status: "",
+    support_response: "",
+    support_id: "",
+    support_name: "",
   });
 
   const [newCliente, setNewCliente] = useState({
-    name: '',
-    address: '',
-    contact: '',
-    email: '',
-    password: '',
-    role: ''
+    name: "",
+    address: "",
+    contact: "",
+    email: "",
+    password: "",
+    role: "",
   });
 
   useEffect(() => {
@@ -106,70 +102,70 @@ const useHome = () => {
     getDataPreguntas();
   }, [refreshDataPreguntas]);
 
-
   useEffect(() => {
     // console.log('userLoged', userLoged)
-  }, [userLoged])
-
+  }, [userLoged]);
 
   useEffect(() => {
-    const resultados = clientes.filter(cliente =>
-      cliente.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      cliente.email?.toLowerCase().includes(busqueda.toLowerCase())
+    const resultados = clientes.filter(
+      (cliente) =>
+        cliente.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        cliente.email?.toLowerCase().includes(busqueda.toLowerCase())
     );
     setClientesFiltrados(resultados);
   }, [busqueda, clientes]);
 
   useEffect(() => {
-    const resultados = preguntas.filter(pregunta =>
-      pregunta.description?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      pregunta.support_name?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      pregunta.type?.toLowerCase().includes(busqueda.toLowerCase())
+    const resultados = preguntas.filter(
+      (pregunta) =>
+        pregunta.description?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        pregunta.support_name?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        pregunta.type?.toLowerCase().includes(busqueda.toLowerCase())
     );
     setPreguntasFiltradas(resultados);
   }, [busqueda, preguntas]);
 
   useEffect(() => {
     // console.log('clientesFiltrados', clientesFiltrados)
-  }, [clientesFiltrados])
+  }, [clientesFiltrados]);
 
   const sendFactura = async (factura) => {
     // console.log('factura', factura)
-  }
+  };
 
   const getUserLoged = async () => {
-    const id = searchParams.get('id');
+    const id = searchParams.get("id");
     // console.log('id', id)
     try {
-      const response = await fetch('http://localhost:3001/usuarios');
+      const response = await fetch("http://localhost:3001/usuarios");
 
       if (!response.ok) {
-        throw new Error('Error al obtener usuarios');
+        throw new Error("Error al obtener usuarios");
       }
 
       const usuarios = await response.json();
 
-      const usuarioEncontrado = usuarios.find(user => user.id === Number(id));
+      const usuarioEncontrado = usuarios.find((user) => user.id === Number(id));
 
       if (!usuarioEncontrado) {
-        throw new Error('Usuario no encontrado');
+        throw new Error("Usuario no encontrado");
       }
 
       setUserLoged(usuarioEncontrado);
     } catch (error) {
-      console.error('Error al obtener usuario:', error);
-      toast.error('Error al obtener información del usuario');
+      console.error("Error al obtener usuario:", error);
+      toast.error("Error al obtener información del usuario");
       setUserLoged({});
     }
-  }
+  };
 
   const getDataInit = async () => {
     try {
-      const response = await fetch('http://localhost:3001/usuarios');
+      const response = await fetch("http://localhost:3001/usuarios");
 
       // Verifica si la respuesta es correcta
       if (!response.ok) {
-        throw new Error('Error al obtener clientes: ' + response.statusText); // Manejo de errores si la respuesta no es correcta
+        throw new Error("Error al obtener clientes: " + response.statusText); // Manejo de errores si la respuesta no es correcta
       }
 
       const result = await response.json(); // Obtener el resultado en formato JSON
@@ -177,27 +173,26 @@ const useHome = () => {
       // console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
       return result; // Retornar la información de clientes
     } catch (error) {
-      console.error('Error:', error.message); // Loguear el error
-      throw new Error('Error en la solicitud: ' + error.message); // Manejo de errores
+      console.error("Error:", error.message); // Loguear el error
+      throw new Error("Error en la solicitud: " + error.message); // Manejo de errores
     }
   };
 
   const getDataPreguntas = async () => {
     try {
-      const response = await fetch('http://localhost:3001/pqr');
+      const response = await fetch("http://localhost:3001/pqr");
       if (!response.ok) {
-        throw new Error('Error al obtener preguntas: ' + response.statusText);
+        throw new Error("Error al obtener preguntas: " + response.statusText);
       }
       const result = await response.json();
       orderPreguntasById(result);
       // console.log('preguntas', result)
       return result;
     } catch (error) {
-      console.error('Error:', error.message); // Loguear el error
-      throw new Error('Error en la solicitud: ' + error.message); // Manejo de errores
+      console.error("Error:", error.message); // Loguear el error
+      throw new Error("Error en la solicitud: " + error.message); // Manejo de errores
     }
-  }
-
+  };
 
   const handleUpdateCliente = async (e) => {
     e.preventDefault();
@@ -208,103 +203,110 @@ const useHome = () => {
       contact: editCliente.contact,
       email: editCliente.email,
       password: editCliente.password,
-      role: editCliente.role
+      role: editCliente.role,
     };
     try {
-      const response = await fetch(`http://localhost:3001/usuarios/${editCliente.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedCliente)
-      });
+      const response = await fetch(
+        `http://localhost:3001/usuarios/${editCliente.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedCliente),
+        }
+      );
       if (response.ok) {
         setIsEditModalOpen(false);
-        toast.success('Usuario actualizado correctamente');
+        toast.success("Usuario actualizado correctamente");
         setEditCliente({
-          id: '',
-          name: '',
-          address: '',
-          contact: '',
-          email: '',
-          password: '',
-          role: ''
+          id: "",
+          name: "",
+          address: "",
+          contact: "",
+          email: "",
+          password: "",
+          role: "",
         });
         alertUpdate();
         setRefreshData(!refreshData);
         // setBusqueda('');
       } else {
         alertError();
-        toast.error(error.message, 'Error al actualizar cliente');
+        toast.error(error.message, "Error al actualizar cliente");
       }
     } catch (error) {
-      console.error('Error al actualizar el cliente:', error);
+      console.error("Error al actualizar el cliente:", error);
     }
-  }
+  };
 
   const handleDeleteCliente = async (id) => {
     try {
       const response = await fetch(`http://localhost:3001/usuarios/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
       if (response.ok) {
         setRefreshData(!refreshData);
       } else {
-        console.error('Error al eliminar el cliente');
+        console.error("Error al eliminar el cliente");
       }
     } catch (error) {
-      console.error('Error al eliminar el cliente:', error);
+      console.error("Error al eliminar el cliente:", error);
     }
-  }
-
+  };
 
   const handleEditCliente = (id) => {
     setIsEditModalOpen(true);
-    const cliente = clientes.find(cliente => cliente.id === id);
+    const cliente = clientes.find((cliente) => cliente.id === id);
     setEditCliente(cliente);
-  }
-
-
+  };
 
   const orderClientesById = (clientes) => {
     const clientesOrder = clientes.sort((a, b) => a.id - b.id);
     setClientes(clientesOrder);
-  }
+  };
 
   const orderPreguntasById = (preguntas) => {
     const preguntasOrder = preguntas.sort((a, b) => a.id - b.id);
     setPreguntas(preguntasOrder);
-  }
+  };
 
   const handleAddCliente = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3001/usuarios', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/usuarios", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(newCliente)
+        body: JSON.stringify(newCliente),
       });
 
       if (!response.ok) {
         alertError();
-        toast.error(error.message, 'Error al agregar cliente');
-        throw new Error('Error al agregar cliente: ' + response.statusText);
+        toast.error(error.message, "Error al agregar cliente");
+        throw new Error("Error al agregar cliente: " + response.statusText);
       }
 
       alertCreate();
       setRefreshData(!refreshData);
       const result = await response.json();
       setClientes([...clientes, result]);
-      toast.success('Usuario agregado correctamente');
-      setNewCliente({ name: '', address: '', contact: '', email: '', password: '', role: '' });
+      toast.success("Usuario agregado correctamente");
+      setNewCliente({
+        name: "",
+        address: "",
+        contact: "",
+        email: "",
+        password: "",
+        role: "",
+      });
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Error al agregar cliente:', error);
+      console.error("Error al agregar cliente:", error);
     }
   };
 
@@ -315,18 +317,18 @@ const useHome = () => {
     // console.log('userLoged', userLoged)
     const updatedPregunta = {
       id: editPregunta.id,
-      status: 'respondida',
+      status: "respondida",
       support_response: editPregunta.support_response,
       support_id: userLoged.id,
       support_name: userLoged.name,
     };
     try {
       const response = await fetch(`http://localhost:3001/pqr`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedPregunta)
+        body: JSON.stringify(updatedPregunta),
       });
       if (response.ok) {
         setIsEditModalOpen(false);
@@ -336,34 +338,31 @@ const useHome = () => {
         alertErrorPregunta();
       }
     } catch (error) {
-      console.error('Error al actualizar la pregunta:', error);
+      console.error("Error al actualizar la pregunta:", error);
     }
-  }
-
-
+  };
 
   const handleEditPregunta = (id) => {
-    setEditPregunta({ ...editPregunta, id: id })
+    setEditPregunta({ ...editPregunta, id: id });
     setIsEditModalOpen(true);
-    const pregunta = preguntas.find(pregunta => pregunta.id === id);
+    const pregunta = preguntas.find((pregunta) => pregunta.id === id);
     setStatePregunta(pregunta.status);
     setEditPregunta(pregunta);
-  }
-
+  };
 
   const formatText = (text) => {
     if (text == null) {
       return text;
     }
     if (text.length > 30) {
-      return text.slice(0, 30) + '...';
+      return text.slice(0, 30) + "...";
     }
     return text;
   };
 
   /* ---------- alertas usuarios----------- */
 
-  // alerta de eliminación  
+  // alerta de eliminación
   const alertDelete = (id, name) => {
     Swal.fire({
       title: "¿Estás seguro? ",
@@ -372,67 +371,65 @@ const useHome = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar"
+      confirmButtonText: "Si, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        handleDeleteCliente(id)
+        handleDeleteCliente(id);
         Swal.fire({
           title: "Eliminado!",
           text: `El cliente ${name} ha sido eliminado.`,
-          icon: "success"
+          icon: "success",
         });
       }
     });
-  }
+  };
 
   // alerta de creacion de cliente
   const alertCreate = () => {
     Swal.fire({
       title: "Cliente creado",
       text: "El cliente ha sido creado correctamente",
-      icon: "success"
+      icon: "success",
     });
-  }
+  };
 
   // alerta de actualización de cliente
   const alertUpdate = () => {
     Swal.fire({
       title: "Cliente actualizado",
       text: "El cliente ha sido actualizado correctamente",
-      icon: "success"
+      icon: "success",
     });
-  }
+  };
 
   // alerta de error
   const alertError = () => {
     Swal.fire({
       title: "Error",
       text: "Hubo un error al actualizar el cliente",
-      icon: "warning"
+      icon: "warning",
     });
-  }
+  };
 
   /* ---------- alertas preguntas----------- */
-
 
   // alerta de actualización de cliente
   const alertUpdatePregunta = () => {
     Swal.fire({
       title: "Pregunta Respondida",
       text: "La pregunta ha sido respondida correctamente",
-      icon: "success"
+      icon: "success",
     });
-  }
+  };
 
   // alerta de error
   const alertErrorPregunta = () => {
     Swal.fire({
       title: "Error",
       text: "Hubo un error al responder la pregunta",
-      icon: "warning"
+      icon: "warning",
     });
-  }
-
+  };
 
   // paginador
   // ... otros estados ...
@@ -445,20 +442,23 @@ const useHome = () => {
   const clientesActuales = clientesFiltrados.slice(indicePrimero, indiceUltimo);
   const totalPaginas = Math.ceil(clientesFiltrados.length / productosPorPagina);
 
-
   const [paginaActualPreguntas, setPaginaActualPreguntas] = useState(1);
   const preguntasPorPagina = 8; // Ajusta este número según necesites
 
   // Calcular productos para la página actual
   const indiceUltimoPreguntas = paginaActualPreguntas * preguntasPorPagina;
   const indicePrimeroPreguntas = indiceUltimoPreguntas - preguntasPorPagina;
-  const preguntasActuales = preguntasFiltradas.slice(indicePrimeroPreguntas, indiceUltimoPreguntas);
-  const totalPaginasPreguntas = Math.ceil(preguntasFiltradas.length / preguntasPorPagina);
+  const preguntasActuales = preguntasFiltradas.slice(
+    indicePrimeroPreguntas,
+    indiceUltimoPreguntas
+  );
+  const totalPaginasPreguntas = Math.ceil(
+    preguntasFiltradas.length / preguntasPorPagina
+  );
 
   const cambiarPaginaPreguntas = (numeroPagina) => {
     setPaginaActualPreguntas(numeroPagina);
   };
-
 
   const cambiarPagina = (numeroPagina) => {
     setPaginaActual(numeroPagina);
@@ -466,16 +466,18 @@ const useHome = () => {
 
   // Manejador para cuando se selecciona un cliente
   const handleClienteSelect = (clienteId) => {
-    const clienteSeleccionado = clientes.find(c => c.id === Number(clienteId));
+    const clienteSeleccionado = clientes.find(
+      (c) => c.id === Number(clienteId)
+    );
     if (clienteSeleccionado) {
-      setFacturaData(prev => ({
+      setFacturaData((prev) => ({
         ...prev,
         cliente: {
           id: clienteSeleccionado.id,
           nombre: clienteSeleccionado.name,
           direccion: clienteSeleccionado.address,
-          telefono: clienteSeleccionado.contact
-        }
+          telefono: clienteSeleccionado.contact,
+        },
       }));
     }
   };
@@ -483,13 +485,13 @@ const useHome = () => {
   // Manejador para los campos del nuevo item
   const handleItemChange = (e) => {
     const { name, value } = e.target;
-    const newValue = name === 'descripcion' ? value : Number(value);
+    const newValue = name === "descripcion" ? value : Number(value);
 
-    setNuevoItem(prev => {
+    setNuevoItem((prev) => {
       const updated = { ...prev, [name]: newValue };
 
       // Calcular precio total del item
-      if (name === 'cantidad' || name === 'precioUnitario') {
+      if (name === "cantidad" || name === "precioUnitario") {
         updated.precio = updated.cantidad * updated.precioUnitario;
       }
 
@@ -499,12 +501,16 @@ const useHome = () => {
 
   // Agregar nuevo item a la factura
   const handleAgregarItem = () => {
-    if (!nuevoItem.descripcion || nuevoItem.cantidad <= 0 || nuevoItem.precioUnitario <= 0) {
-      toast.error('Por favor complete todos los campos del item correctamente');
+    if (
+      !nuevoItem.descripcion ||
+      nuevoItem.cantidad <= 0 ||
+      nuevoItem.precioUnitario <= 0
+    ) {
+      toast.error("Por favor complete todos los campos del item correctamente");
       return;
     }
 
-    setFacturaData(prev => {
+    setFacturaData((prev) => {
       const updatedItems = [...prev.items, nuevoItem];
       const subtotal = updatedItems.reduce((sum, item) => sum + item.precio, 0);
       const impuestos = subtotal * 0.19; // 19% de impuestos
@@ -514,22 +520,22 @@ const useHome = () => {
         items: updatedItems,
         subtotal: subtotal,
         impuestos: impuestos,
-        total: subtotal + impuestos
+        total: subtotal + impuestos,
       };
     });
 
     // Limpiar el formulario de nuevo item
     setNuevoItem({
-      descripcion: '',
+      descripcion: "",
       cantidad: 0,
       precioUnitario: 0,
-      precio: 0
+      precio: 0,
     });
   };
 
   // Eliminar item de la factura
   const handleEliminarItem = (index) => {
-    setFacturaData(prev => {
+    setFacturaData((prev) => {
       const updatedItems = prev.items.filter((_, i) => i !== index);
       const subtotal = updatedItems.reduce((sum, item) => sum + item.precio, 0);
       const impuestos = subtotal * 0.19;
@@ -539,7 +545,7 @@ const useHome = () => {
         items: updatedItems,
         subtotal: subtotal,
         impuestos: impuestos,
-        total: subtotal + impuestos
+        total: subtotal + impuestos,
       };
     });
   };
@@ -556,93 +562,96 @@ const useHome = () => {
     fechaActual.setHours(0, 0, 0, 0);
 
     if (fechaSeleccionada > fechaActual) {
-      toast.error('No se pueden generar facturas con fecha futura');
+      toast.error("No se pueden generar facturas con fecha futura");
       return;
     }
 
     if (!facturaData.cliente.id || facturaData.items.length === 0) {
-      toast.error('Por favor seleccione un cliente y agregue al menos un item');
+      toast.error("Por favor seleccione un cliente y agregue al menos un item");
       return;
     }
 
     // Formatear los datos según espera el backend
     const facturaFormateada = {
-      numeroFactura: facturaData.numeroFactura,
+      numeroFactura: `FACT-${String(Math.floor(Math.random() * 9999)).padStart(
+        4,
+        "0"
+      )}`,
       fecha: facturaData.fecha,
       cliente: {
         id: facturaData.cliente.id,
         nombre: facturaData.cliente.nombre,
+        documento: facturaData.cliente.documento || "123456789", // valor por defecto si no existe
         direccion: facturaData.cliente.direccion,
-        telefono: facturaData.cliente.telefono
+        telefono: facturaData.cliente.telefono,
+        email: facturaData.cliente.email || "", // valor por defecto si no existe
       },
-      items: facturaData.items.map(item => ({
+      items: facturaData.items.map((item) => ({
+        producto_id: item.id || 1, // valor por defecto si no existe
         descripcion: item.descripcion,
         cantidad: item.cantidad,
         precioUnitario: item.precioUnitario,
-        precio: item.precio,
-        impuesto: item.precio * 0.19 // 19% de impuesto
+        precio: item.cantidad * item.precioUnitario,
+        impuesto: item.cantidad * item.precioUnitario * 0.19,
       })),
       total: facturaData.subtotal,
       impuestos: facturaData.impuestos,
-      notas: "" // Opcional
+      notas: "Entrega en 5 días hábiles",
     };
 
     try {
-      const response = await fetch('http://localhost:3001/factura', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/factura", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(facturaFormateada)
+        body: JSON.stringify(facturaFormateada),
       });
 
       if (!response.ok) {
+        console.log("data: ", facturaFormateada);
         const errorData = await response.json();
-        throw new Error(errorData.detalles || 'Error al generar la factura');
+        throw new Error(errorData.detalles || "Error al generar la factura");
       }
 
       const resultado = await response.json();
-      toast.success('Factura generada exitosamente');
+      toast.success("Factura generada exitosamente");
 
       // Limpiar el formulario
       setFacturaData({
-        numeroFactura: '',
-        fecha: new Date().toISOString().split('T')[0],
+        numeroFactura: "",
+        fecha: new Date().toISOString().split("T")[0],
         cliente: {
-          id: '',
-          nombre: '',
-          direccion: '',
-          telefono: ''
+          id: "",
+          nombre: "",
+          direccion: "",
+          telefono: "",
         },
         items: [],
         subtotal: 0,
         impuestos: 0,
-        total: 0
+        total: 0,
       });
     } catch (error) {
-      setFacturaData({
-        numeroFactura: '',
-        fecha: new Date().toISOString().split('T')[0],
-        cliente: {
-          id: '',
-          nombre: '',
-          direccion: '',
-          telefono: ''
-        },
-        items: [],
-        subtotal: 0,
-        impuestos: 0,
-        total: 0
-      });
-      toast.success('Factura generada exitosamente');
-      // console.error('Error:', error);
-      // toast.error(error.message || 'Error al generar la factura');
+      // setFacturaData({
+      //   numeroFactura: '',
+      //   fecha: new Date().toISOString().split('T')[0],
+      //   cliente: {
+      //     id: '',
+      //     nombre: '',
+      //     direccion: '',
+      //     telefono: ''
+      //   },
+      //   items: [],
+      //   subtotal: 0,
+      //   impuestos: 0,
+      //   total: 0
+      // });
+      // toast.success('Factura generada exitosamente');
+      console.error("Error:", error);
+      toast.error(error.message || "Error al generar la factura");
     }
   };
-
-
-
-
 
   return {
     clientes,
@@ -668,7 +677,6 @@ const useHome = () => {
     cambiarPagina,
     totalPaginas,
 
-
     // preguntas
     preguntas,
     handleEditPregunta,
@@ -693,7 +701,7 @@ const useHome = () => {
     handleAgregarItem,
     handleEliminarItem,
     handleGenerarFactura,
-  }
-}
+  };
+};
 
 export default useHome;
