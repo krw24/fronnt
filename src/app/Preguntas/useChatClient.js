@@ -27,6 +27,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
           `${API_URL}/chat/user/${userLoged.id}/active`
         );
         const data = await response.json();
+        console.log("data chat existente", data);
 
         if (data && data.id) {
           setChatId(data.id);
