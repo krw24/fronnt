@@ -5,6 +5,7 @@ import { FiSearch, FiLogOut } from "react-icons/fi";
 import useQuestions from "./useQuestions";
 import useChatClient from "./useChatClient";
 import { Chat } from "../../components/chat/Chat.js";
+import { Toaster } from "react-hot-toast";
 
 const Preguntas = () => {
   const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions();
@@ -32,41 +33,49 @@ const Preguntas = () => {
                 }}
                 className="cursor-pointer translate-x-1 hover:translate-x-2 transition-all duration-300"
               >
-                <FiLogOut className="text-2xl text-gray-500" />
+                <FiLogOut className="text-3xl pl-2" />
               </div>
             </div>
           </div>
         </div>
       </div>
       <div className="w-full h-[calc(100vh-88px)] flex items-center justify-center">
-        <div className="w-[500px] h-[400px] p-5 bg-slate-200 rounded-xl shadow-xl ">
-          <div className="w-full flex flex-col gap-4 h-full p-4 pt-6  bg-white rounded-lg">
+        <div className="w-[500px] h-[400px] p-5 bg-white rounded-xl shadow-xl ">
+          <div className="w-full flex flex-col gap-2"> 
+            <div className="flex justify-center font-semibold text-3xl">Generador de PQRs</div>
+            <div className="flex justify-center font-light text-md text-center">
+              En este apartado podrás crear una petición para que un administrador pueda responderte lo antes posible.
+            </div>
+          </div>
+          <form className="w-full flex flex-col gap-4 h-full p-4 pt-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="relative h-11">
               <select
                 id="testMode"
                 className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300  focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
                 defaultValue={""}
+                {...register("type")}
               >
                 <option disabled value={""}>
                   Seleccione una opción
                 </option>
-                <option value="1">Peticion</option>
-                <option value="2">Queja</option>
-                <option value="3">Reclamo</option>
+                <option value="peticion">Peticion</option>
+                <option value="queja">Queja</option>
+                <option value="reclamo">Reclamo</option>
               </select>
               <label
                 htmlFor="testMode"
                 className="absolute text-md  dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-[#a5aefc]  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
               >
-                Modo pruebas
+                Tipo de peticion
               </label>
             </div>
             <div className="relative ">
               <textarea
                 id="description"
                 rows={4}
-                className="min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
+                className="min-h-[111px] max-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
                 placeholder=" "
+                {...register("description")}
               />
               <label
                 htmlFor="description"
@@ -80,7 +89,7 @@ const Preguntas = () => {
                 Enviar
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       {chatIsOpen ? (
@@ -120,6 +129,7 @@ const Preguntas = () => {
           </div>
         </div>
       )}
+      <Toaster position="top-right" />
     </div>
   );
 };
