@@ -40,7 +40,7 @@ const useQuestions = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log('userLoged', userLoged)
+        // console.log('userLoged', userLoged)
     }, [userLoged])
 
     useEffect(() => {
@@ -97,7 +97,7 @@ const useQuestions = (props) => {
             setValue('description', '')
             toast.success('PQR enviada correctamente, se responderá pronto');
         } catch (error) {
-            console.log('Error:', error);
+            // console.log('Error:', error);
             toast.error('Error al enviar la PQR');
         }
 
@@ -143,7 +143,7 @@ const useQuestions = (props) => {
     
             const result = await response.json(); // Obtener el resultado en formato JSON
                 orderPreguntasById(result);
-                console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
+                // console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
                 return result; // Retornar la información de preguntas
             } catch (error) {
                 console.error('Error:', error.message); // Loguear el error

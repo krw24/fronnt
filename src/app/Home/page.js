@@ -66,7 +66,7 @@ const Home = () => {
         handleGenerarFactura,
     } = useHome();
 
-    console.log('facturaData', clientes)
+    // console.log('facturaData', clientes)
 
     const SkeletonCell = () => {
         return (

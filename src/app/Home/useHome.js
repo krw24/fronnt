@@ -108,7 +108,7 @@ const useHome = () => {
 
 
   useEffect(() => {
-    console.log('userLoged', userLoged)
+    // console.log('userLoged', userLoged)
   }, [userLoged])
 
 
@@ -130,16 +130,16 @@ const useHome = () => {
   }, [busqueda, preguntas]);
 
   useEffect(() => {
-    console.log('clientesFiltrados', clientesFiltrados)
+    // console.log('clientesFiltrados', clientesFiltrados)
   }, [clientesFiltrados])
 
   const sendFactura = async (factura) => {
-    console.log('factura', factura)
+    // console.log('factura', factura)
   }
 
   const getUserLoged = async () => {
     const id = searchParams.get('id');
-    console.log('id', id)
+    // console.log('id', id)
     try {
       const response = await fetch('http://localhost:3001/usuarios');
 
@@ -174,7 +174,7 @@ const useHome = () => {
 
       const result = await response.json(); // Obtener el resultado en formato JSON
       orderClientesById(result);
-      console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
+      // console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
       return result; // Retornar la información de clientes
     } catch (error) {
       console.error('Error:', error.message); // Loguear el error
@@ -190,7 +190,7 @@ const useHome = () => {
       }
       const result = await response.json();
       orderPreguntasById(result);
-      console.log('preguntas', result)
+      // console.log('preguntas', result)
       return result;
     } catch (error) {
       console.error('Error:', error.message); // Loguear el error
@@ -311,8 +311,8 @@ const useHome = () => {
   const handleUpdatePregunta = async (e) => {
     e.preventDefault();
 
-    console.log('editPregunta', editPregunta)
-    console.log('userLoged', userLoged)
+    // console.log('editPregunta', editPregunta)
+    // console.log('userLoged', userLoged)
     const updatedPregunta = {
       id: editPregunta.id,
       status: 'respondida',

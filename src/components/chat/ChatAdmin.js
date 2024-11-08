@@ -26,7 +26,7 @@ export const ChatAdmin = ({ role }) => {
   } = useChatAdmin(role, userLoged);
 
   useEffect(() => {
-    console.log('Usuario logueado:', userLoged);
+    // console.log('Usuario logueado:', userLoged);
     if (!userLoged) {
       toast.error('No hay usuario logueado');
     }

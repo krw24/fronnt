@@ -80,11 +80,11 @@ export const useChatAdmin = (role, userLoged) => {
       return;
     }
   
-    console.log('Enviando mensaje con:', {
-      chatId,
-      sender_id: userLoged.id,
-      message: message.trim()
-    });
+    // console.log('Enviando mensaje con:', {
+    //   chatId,
+    //   sender_id: userLoged.id,
+    //   message: message.trim()
+    // });
   
     try {
       const response = await fetch(`${API_BASE}/chat/${chatId}/messages`, {

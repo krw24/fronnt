@@ -16,7 +16,7 @@ const usePage = () => {
     }, [])
 
     useEffect(() => {
-        console.log(users)
+        // console.log(users)
     }, [users])
 
     const getUsers = async () => {
