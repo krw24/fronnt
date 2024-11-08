@@ -8,37 +8,32 @@ import { Chat } from "../../components/chat/Chat.js";
 import { Toaster } from "react-hot-toast";
 
 const Preguntas = () => {
-  const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions();
+  const { userLoged, chatIsOpen, setChatIsOpen, onSubmit, handleSubmit, register } = useQuestions();
   const chatLogic = useChatClient(userLoged, chatIsOpen);
 
   return (
-    <div className="w-full h-screen flex flex-row relative">
-      <div className="w-20 h-screen bg-indigo-200 flex flex-col">
-
-      </div>
-      <div className="">
-        <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-200">
-          <div className="w-full text-6xl  font-semibold bg-indigo-200">
-            Soporte
-          </div>
-          <div className=" flex items-center flex-row gap-2">
-            <div className="w-72 flex items-center gap-2 justify-center">
-              <div className="w-12 h-12 bg-white border-[1px] border-indigo-500 rounded-full flex items-center justify-center">
-                <span className="text-3xl font-bold text-indigo-500">
-                  {userLoged?.name?.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div className="flex flex-row gap-2">
-                <div className="text-lg font-semibold">{userLoged.name}</div>
-                <div
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    window.location.href = "/";
-                  }}
-                  className="cursor-pointer translate-x-1 hover:translate-x-2 transition-all duration-300"
-                >
-                  <FiLogOut className="text-3xl pl-2" />
-                </div>
+    <div className="w-full h-screen flex flex-col relative">
+      <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-300">
+        <div className="w-full text-6xl  font-semibold bg-indigo-200">
+          Soporte
+        </div>
+        <div className=" flex items-center flex-row gap-2">
+          <div className="w-72 flex items-center gap-2 justify-center">
+            <div className="w-12 h-12 bg-white border-[1px] border-indigo-500 rounded-full flex items-center justify-center">
+              <span className="text-3xl font-bold text-indigo-500">
+                {userLoged?.name?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex flex-row gap-2">
+              <div className="text-lg font-semibold">{userLoged.name}</div>
+              <div
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  window.location.href = "/";
+                }}
+                className="cursor-pointer translate-x-1 hover:translate-x-2 transition-all duration-300"
+              >
+                <FiLogOut className="text-3xl pl-2" />
               </div>
             </div>
           </div>
