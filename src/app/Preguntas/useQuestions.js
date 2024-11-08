@@ -3,7 +3,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-const useQuestions = () => {
+const useQuestions = ({view}) => {
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -15,10 +15,10 @@ const useQuestions = () => {
     const [preguntas, setPreguntas] = useState([]);
     
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [refreshData, setRefreshData] = useState(false);
     const [busqueda, setBusqueda] = useState('');
     const [preguntasFiltradas, setPreguntasFiltradas] = useState(preguntas);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [statePregunta, setStatePregunta] = useState('');
     
     const [editPregunta, setEditPregunta] = useState({
       
@@ -32,7 +32,7 @@ const useQuestions = () => {
   
     useEffect(() => {
       getDataInit();
-    }, [refreshData]);
+    }, [view]);
   
 
     useEffect(() => {
@@ -45,8 +45,8 @@ const useQuestions = () => {
 
     useEffect(() => {
         const resultados = preguntas.filter(pregunta =>
-          pregunta.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
-          pregunta.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
+          pregunta.type?.toLowerCase().includes(busqueda.toLowerCase()) ||
+          pregunta.support_name?.toLowerCase().includes(busqueda.toLowerCase())
         );
         setPreguntasFiltradas(resultados);
       }, [busqueda, preguntas]);
@@ -131,23 +131,26 @@ const useQuestions = () => {
 
 
     const getDataInit = async () => {
-        try {
-          const response = await fetch('http://localhost:3001/pqr/user');
+        if (userLoged.id) {
+            let id = userLoged.id;
+            try {
+                const response = await fetch(`http://localhost:3001/pqr/user/${id}`);
     
           // Verifica si la respuesta es correcta
-          if (!response.ok) {
-            throw new Error('Error al obtener preguntas: ' + response.statusText); // Manejo de errores si la respuesta no es correcta
-          }
+            if (!response.ok) {
+                throw new Error('Error al obtener preguntas: ' + response.statusText); // Manejo de errores si la respuesta no es correcta
+            }
     
-          const result = await response.json(); // Obtener el resultado en formato JSON
-          orderPreguntasById(result);
-          console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
-          return result; // Retornar la información de preguntas
-        } catch (error) {
-            console.error('Error:', error.message); // Loguear el error
-          throw new Error('Error en la solicitud: ' + error.message); // Manejo de errores
+            const result = await response.json(); // Obtener el resultado en formato JSON
+                orderPreguntasById(result);
+                console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
+                return result; // Retornar la información de preguntas
+            } catch (error) {
+                console.error('Error:', error.message); // Loguear el error
+                throw new Error('Error en la solicitud: ' + error.message); // Manejo de errores
+            }
         }
-      };
+    };
 
 
       const orderPreguntasById = (preguntas) => {

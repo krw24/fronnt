@@ -776,6 +776,7 @@ const Home = () => {
                     }
                 </div>
             </div>
+            <Toaster position="top-right"/>
         </div>
     )
 }
