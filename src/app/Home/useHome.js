@@ -8,7 +8,7 @@ const useHome = () => {
 
   const [clientes, setClientes] = useState([]);
   const [preguntas, setPreguntas] = useState([]);
-    
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [refreshData, setRefreshData] = useState(false);
   const [refreshDataPreguntas, setRefreshDataPreguntas] = useState(false);
@@ -44,18 +44,18 @@ const useHome = () => {
     total: 0
   });
 
-  
+
   useEffect(() => {
-    if(estadoSeleccionado == 0){
+    if (estadoSeleccionado == 0) {
       setBusqueda('')
     }
-    if(estadoSeleccionado == '1'){
+    if (estadoSeleccionado == '1') {
       setBusqueda('preguntas')
     }
-    if(estadoSeleccionado == '2'){
+    if (estadoSeleccionado == '2') {
       setBusqueda('quejas')
     }
-    if(estadoSeleccionado == '3'){
+    if (estadoSeleccionado == '3') {
       setBusqueda('reclamos')
     }
   }, [estadoSeleccionado])
@@ -67,10 +67,10 @@ const useHome = () => {
     name: '',
     address: '',
     contact: '',
-    email: '',  
+    email: '',
     password: '',
     role: ''
-  }); 
+  });
 
   const [editPregunta, setEditPregunta] = useState({
     id: '',
@@ -79,7 +79,7 @@ const useHome = () => {
     support_id: '',
     support_name: ''
   });
-  
+
   const [newCliente, setNewCliente] = useState({
     name: '',
     address: '',
@@ -89,28 +89,28 @@ const useHome = () => {
     role: ''
   });
 
-    useEffect(() => {
-        getDataInit();
-        getUserLoged();
-    }, []);
-  
-    useEffect(() => {
-      getDataInit();
-    }, [refreshData]);
-  
-    useEffect(() => {
-      getDataPreguntas();
-    }, []);
-  
-    useEffect(() => {
-      getDataPreguntas();
-    }, [refreshDataPreguntas]);
-  
+  useEffect(() => {
+    getDataInit();
+    getUserLoged();
+  }, []);
 
-    useEffect(() => {
-      console.log('userLoged', userLoged)
-    }, [userLoged])
-  
+  useEffect(() => {
+    getDataInit();
+  }, [refreshData]);
+
+  useEffect(() => {
+    getDataPreguntas();
+  }, []);
+
+  useEffect(() => {
+    getDataPreguntas();
+  }, [refreshDataPreguntas]);
+
+
+  useEffect(() => {
+    console.log('userLoged', userLoged)
+  }, [userLoged])
+
 
   useEffect(() => {
     const resultados = clientes.filter(cliente =>
@@ -129,9 +129,9 @@ const useHome = () => {
     setPreguntasFiltradas(resultados);
   }, [busqueda, preguntas]);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log('clientesFiltrados', clientesFiltrados)
-  },[clientesFiltrados])
+  }, [clientesFiltrados])
 
   const sendFactura = async (factura) => {
     console.log('factura', factura)
@@ -141,25 +141,25 @@ const useHome = () => {
     const id = searchParams.get('id');
     console.log('id', id)
     try {
-        const response = await fetch('http://localhost:3001/usuarios');
-        
-        if (!response.ok) {
-            throw new Error('Error al obtener usuarios');
-        }
+      const response = await fetch('http://localhost:3001/usuarios');
 
-        const usuarios = await response.json();
+      if (!response.ok) {
+        throw new Error('Error al obtener usuarios');
+      }
 
-        const usuarioEncontrado = usuarios.find(user => user.id === Number(id));
-        
-        if (!usuarioEncontrado) {
-            throw new Error('Usuario no encontrado');
-        }
+      const usuarios = await response.json();
 
-        setUserLoged(usuarioEncontrado);
+      const usuarioEncontrado = usuarios.find(user => user.id === Number(id));
+
+      if (!usuarioEncontrado) {
+        throw new Error('Usuario no encontrado');
+      }
+
+      setUserLoged(usuarioEncontrado);
     } catch (error) {
-        console.error('Error al obtener usuario:', error);
-        toast.error('Error al obtener información del usuario');
-        setUserLoged({});
+      console.error('Error al obtener usuario:', error);
+      toast.error('Error al obtener información del usuario');
+      setUserLoged({});
     }
   }
 
@@ -173,7 +173,7 @@ const useHome = () => {
       }
 
       const result = await response.json(); // Obtener el resultado en formato JSON
-        orderClientesById(result);
+      orderClientesById(result);
       console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
       return result; // Retornar la información de clientes
     } catch (error) {
@@ -198,7 +198,7 @@ const useHome = () => {
     }
   }
 
-  
+
   const handleUpdateCliente = async (e) => {
     e.preventDefault();
     const updatedCliente = {
@@ -207,7 +207,7 @@ const useHome = () => {
       address: editCliente.address,
       contact: editCliente.contact,
       email: editCliente.email,
-      password: editCliente.password, 
+      password: editCliente.password,
       role: editCliente.role
     };
     try {
@@ -216,7 +216,7 @@ const useHome = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updatedCliente)  
+        body: JSON.stringify(updatedCliente)
       });
       if (response.ok) {
         setIsEditModalOpen(false);
@@ -235,11 +235,11 @@ const useHome = () => {
         // setBusqueda('');
       } else {
         alertError();
-        toast.error(error.message,'Error al actualizar cliente');
+        toast.error(error.message, 'Error al actualizar cliente');
       }
     } catch (error) {
       console.error('Error al actualizar el cliente:', error);
-    } 
+    }
   }
 
   const handleDeleteCliente = async (id) => {
@@ -250,7 +250,7 @@ const useHome = () => {
           'Content-Type': 'application/json'
         }
       });
-      if (response.ok) {  
+      if (response.ok) {
         setRefreshData(!refreshData);
       } else {
         console.error('Error al eliminar el cliente');
@@ -258,14 +258,14 @@ const useHome = () => {
     } catch (error) {
       console.error('Error al eliminar el cliente:', error);
     }
-  } 
+  }
 
-  
+
   const handleEditCliente = (id) => {
     setIsEditModalOpen(true);
     const cliente = clientes.find(cliente => cliente.id === id);
     setEditCliente(cliente);
-  } 
+  }
 
 
 
@@ -292,7 +292,7 @@ const useHome = () => {
 
       if (!response.ok) {
         alertError();
-        toast.error(error.message,'Error al agregar cliente');
+        toast.error(error.message, 'Error al agregar cliente');
         throw new Error('Error al agregar cliente: ' + response.statusText);
       }
 
@@ -301,12 +301,12 @@ const useHome = () => {
       const result = await response.json();
       setClientes([...clientes, result]);
       toast.success('Usuario agregado correctamente');
-      setNewCliente({ name: '', address: '', contact: '', email: '', password: '', role: '' }); 
+      setNewCliente({ name: '', address: '', contact: '', email: '', password: '', role: '' });
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error al agregar cliente:', error);
     }
-  };  
+  };
 
   const handleUpdatePregunta = async (e) => {
     e.preventDefault();
@@ -348,17 +348,17 @@ const useHome = () => {
     const pregunta = preguntas.find(pregunta => pregunta.id === id);
     setStatePregunta(pregunta.status);
     setEditPregunta(pregunta);
-  } 
+  }
 
-    
- const formatText = (text) => {
-      if (text == null) {
-        return text;
-      }
-      if (text.length > 30) {
-        return text.slice(0, 30) + '...';
-      }
+
+  const formatText = (text) => {
+    if (text == null) {
       return text;
+    }
+    if (text.length > 30) {
+      return text.slice(0, 30) + '...';
+    }
+    return text;
   };
 
   /* ---------- alertas usuarios----------- */
@@ -366,21 +366,21 @@ const useHome = () => {
   // alerta de eliminación  
   const alertDelete = (id, name) => {
     Swal.fire({
-    title: "¿Estás seguro? ",
-    text: "Esta acción es irreversible. ¿Quieres continuar?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Si, eliminar"
+      title: "¿Estás seguro? ",
+      text: "Esta acción es irreversible. ¿Quieres continuar?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar"
     }).then((result) => {
       if (result.isConfirmed) {
-          handleDeleteCliente(id)
-          Swal.fire({
-              title: "Eliminado!",
-              text: `El cliente ${name} ha sido eliminado.`,
-              icon: "success"
-          });
+        handleDeleteCliente(id)
+        Swal.fire({
+          title: "Eliminado!",
+          text: `El cliente ${name} ha sido eliminado.`,
+          icon: "success"
+        });
       }
     });
   }
@@ -392,7 +392,7 @@ const useHome = () => {
       text: "El cliente ha sido creado correctamente",
       icon: "success"
     });
-  } 
+  }
 
   // alerta de actualización de cliente
   const alertUpdate = () => {
@@ -434,7 +434,7 @@ const useHome = () => {
   }
 
 
-   // paginador
+  // paginador
   // ... otros estados ...
   const [paginaActual, setPaginaActual] = useState(1);
   const productosPorPagina = 10; // Ajusta este número según necesites
@@ -484,15 +484,15 @@ const useHome = () => {
   const handleItemChange = (e) => {
     const { name, value } = e.target;
     const newValue = name === 'descripcion' ? value : Number(value);
-    
+
     setNuevoItem(prev => {
       const updated = { ...prev, [name]: newValue };
-      
+
       // Calcular precio total del item
       if (name === 'cantidad' || name === 'precioUnitario') {
         updated.precio = updated.cantidad * updated.precioUnitario;
       }
-      
+
       return updated;
     });
   };
@@ -508,7 +508,7 @@ const useHome = () => {
       const updatedItems = [...prev.items, nuevoItem];
       const subtotal = updatedItems.reduce((sum, item) => sum + item.precio, 0);
       const impuestos = subtotal * 0.19; // 19% de impuestos
-      
+
       return {
         ...prev,
         items: updatedItems,
@@ -547,81 +547,96 @@ const useHome = () => {
   // Generar factura
   const handleGenerarFactura = async (e) => {
     e.preventDefault();
-    
+
     // Validación de fecha
     const fechaSeleccionada = new Date(facturaData.fecha);
     const fechaActual = new Date();
-    
+
     fechaSeleccionada.setHours(0, 0, 0, 0);
     fechaActual.setHours(0, 0, 0, 0);
 
     if (fechaSeleccionada > fechaActual) {
-        toast.error('No se pueden generar facturas con fecha futura');
-        return;
+      toast.error('No se pueden generar facturas con fecha futura');
+      return;
     }
-    
+
     if (!facturaData.cliente.id || facturaData.items.length === 0) {
-        toast.error('Por favor seleccione un cliente y agregue al menos un item');
-        return;
+      toast.error('Por favor seleccione un cliente y agregue al menos un item');
+      return;
     }
 
     // Formatear los datos según espera el backend
     const facturaFormateada = {
-        numeroFactura: facturaData.numeroFactura,
-        fecha: facturaData.fecha,
-        cliente: {
-            id: facturaData.cliente.id,
-            nombre: facturaData.cliente.nombre,
-            direccion: facturaData.cliente.direccion,
-            telefono: facturaData.cliente.telefono
-        },
-        items: facturaData.items.map(item => ({
-            descripcion: item.descripcion,
-            cantidad: item.cantidad,
-            precioUnitario: item.precioUnitario,
-            precio: item.precio,
-            impuesto: item.precio * 0.19 // 19% de impuesto
-        })),
-        total: facturaData.subtotal,
-        impuestos: facturaData.impuestos,
-        notas: "" // Opcional
+      numeroFactura: facturaData.numeroFactura,
+      fecha: facturaData.fecha,
+      cliente: {
+        id: facturaData.cliente.id,
+        nombre: facturaData.cliente.nombre,
+        direccion: facturaData.cliente.direccion,
+        telefono: facturaData.cliente.telefono
+      },
+      items: facturaData.items.map(item => ({
+        descripcion: item.descripcion,
+        cantidad: item.cantidad,
+        precioUnitario: item.precioUnitario,
+        precio: item.precio,
+        impuesto: item.precio * 0.19 // 19% de impuesto
+      })),
+      total: facturaData.subtotal,
+      impuestos: facturaData.impuestos,
+      notas: "" // Opcional
     };
 
     try {
-        const response = await fetch('http://localhost:3001/factura', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(facturaFormateada)
-        });
+      const response = await fetch('http://localhost:3001/factura', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(facturaFormateada)
+      });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.detalles || 'Error al generar la factura');
-        }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detalles || 'Error al generar la factura');
+      }
 
-        const resultado = await response.json();
-        toast.success('Factura generada exitosamente');
-        
-        // Limpiar el formulario
-        setFacturaData({
-            numeroFactura: '',
-            fecha: new Date().toISOString().split('T')[0],
-            cliente: {
-                id: '',
-                nombre: '',
-                direccion: '',
-                telefono: ''
-            },
-            items: [],
-            subtotal: 0,
-            impuestos: 0,
-            total: 0
-        });
+      const resultado = await response.json();
+      toast.success('Factura generada exitosamente');
+
+      // Limpiar el formulario
+      setFacturaData({
+        numeroFactura: '',
+        fecha: new Date().toISOString().split('T')[0],
+        cliente: {
+          id: '',
+          nombre: '',
+          direccion: '',
+          telefono: ''
+        },
+        items: [],
+        subtotal: 0,
+        impuestos: 0,
+        total: 0
+      });
     } catch (error) {
-        console.error('Error:', error);
-        toast.error(error.message || 'Error al generar la factura');
+      setFacturaData({
+        numeroFactura: '',
+        fecha: new Date().toISOString().split('T')[0],
+        cliente: {
+          id: '',
+          nombre: '',
+          direccion: '',
+          telefono: ''
+        },
+        items: [],
+        subtotal: 0,
+        impuestos: 0,
+        total: 0
+      });
+      toast.success('Factura generada exitosamente');
+      // console.error('Error:', error);
+      // toast.error(error.message || 'Error al generar la factura');
     }
   };
 
@@ -629,56 +644,56 @@ const useHome = () => {
 
 
 
-    return {
-      clientes,
-      formatText,
-      handleAddCliente,
-      isModalOpen,
-      setIsModalOpen,
-      newCliente,
-      setNewCliente,
-      handleUpdateCliente,
-      handleDeleteCliente,
-      handleEditCliente,
-      isEditModalOpen,
-      setIsEditModalOpen,
-      editCliente,
-      setEditCliente,
-      busqueda,
-      setBusqueda,
-      clientesFiltrados,
-      alertDelete,
-      clientesActuales,
-      paginaActual,
-      cambiarPagina,
-      totalPaginas,
+  return {
+    clientes,
+    formatText,
+    handleAddCliente,
+    isModalOpen,
+    setIsModalOpen,
+    newCliente,
+    setNewCliente,
+    handleUpdateCliente,
+    handleDeleteCliente,
+    handleEditCliente,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    editCliente,
+    setEditCliente,
+    busqueda,
+    setBusqueda,
+    clientesFiltrados,
+    alertDelete,
+    clientesActuales,
+    paginaActual,
+    cambiarPagina,
+    totalPaginas,
 
 
-      // preguntas
-      preguntas,
-      handleEditPregunta,
-      editPregunta,
-      setEditPregunta,
-      handleUpdatePregunta,
+    // preguntas
+    preguntas,
+    handleEditPregunta,
+    editPregunta,
+    setEditPregunta,
+    handleUpdatePregunta,
 
-      preguntasActuales,
-      paginaActualPreguntas,
-      cambiarPaginaPreguntas,
-      totalPaginasPreguntas,
-      estadoSeleccionado,
-      setEstadoSeleccionado,
-      statePregunta,
+    preguntasActuales,
+    paginaActualPreguntas,
+    cambiarPaginaPreguntas,
+    totalPaginasPreguntas,
+    estadoSeleccionado,
+    setEstadoSeleccionado,
+    statePregunta,
 
-      // Nuevos returns para la facturación
-      facturaData,
-      setFacturaData,
-      nuevoItem,
-      handleClienteSelect,
-      handleItemChange,
-      handleAgregarItem,
-      handleEliminarItem,
-      handleGenerarFactura,
-    }
+    // Nuevos returns para la facturación
+    facturaData,
+    setFacturaData,
+    nuevoItem,
+    handleClienteSelect,
+    handleItemChange,
+    handleAgregarItem,
+    handleEliminarItem,
+    handleGenerarFactura,
+  }
 }
 
 export default useHome;
