@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="w-full h-screen bg-slate-50 flex justify-center items-center">
       <div className="w-[400px] bg-white flex flex-col rounded-xl py-12 px-3 gap-4 shadow-lg">
-        <div className="w-full flex justify-center text-4xl font-semibold pb-3">Inicio de sesión</div>
+        <div className="w-full flex justify-center text-4xl font-semibold pb-3 text-slate-950">Inicio de sesión</div>
         <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <input 
             type="email"
