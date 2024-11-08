@@ -76,7 +76,7 @@ const Home = () => {
             </div>
             <div className="flex flex-col w-full h-full bg-indigo-600">
                 <div className="w-full h-20 bg-slate-200">
-
+                <h1>ha</h1>
                 </div>
                 <div className="w-full h-[calc(100vh-80px)] bg-slate-100">
                     {
