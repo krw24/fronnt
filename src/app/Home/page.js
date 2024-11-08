@@ -51,8 +51,19 @@ const Home = () => {
         totalPaginasPreguntas,
         estadoSeleccionado,
         setEstadoSeleccionado,
-        statePregunta
+        statePregunta,
+
+        facturaData,
+        setFacturaData,
+        nuevoItem,
+        handleClienteSelect,
+        handleItemChange,
+        handleAgregarItem,
+        handleEliminarItem,
+        handleGenerarFactura,
     } = useHome();
+
+    console.log('facturaData', clientes)
 
     const SkeletonCell = () => {
         return (
@@ -580,8 +591,186 @@ const Home = () => {
                     {
                         selected === 3 &&
                         (
-                            <div className="w-full h-full bg-green-500">
-                                
+                            <div className="w-full h-full flex flex-row justify-center items-center gap-5">
+                                <div className="w-[700px] h-auto flex flex-col bg-white rounded-lg shadow-lg p-8">
+                                    <div className="w-full flex justify-center text-3xl font-bold mb-2">Generador de facturas electrónicas</div>
+                                    <div className="w-full flex justify-center text-md font-light mb-6">En este apartado podrás generar facturas electrónicas para tus clientes</div>
+                                    
+                                    <form onSubmit={handleGenerarFactura} className="flex flex-col gap-4">
+                                        {/* Información básica de la factura */}
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex flex-col">
+                                                <label className="text-sm text-gray-600 mb-1">Número de Factura</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={facturaData.numeroFactura}
+                                                    onChange={(e) => setFacturaData(prev => ({...prev, numeroFactura: e.target.value}))}
+                                                    className="p-2 border border-gray-300 rounded-md"
+                                                    placeholder="Ej: 123"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <label className="text-sm text-gray-600 mb-1">Fecha</label>
+                                                <input 
+                                                    type="date" 
+                                                    value={facturaData.fecha}
+                                                    onChange={(e) => setFacturaData(prev => ({...prev, fecha: e.target.value}))}
+                                                    className="p-2 border border-gray-300 rounded-md"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Información del cliente */}
+                                        <div className="border-t pt-4 mt-2">
+                                            <h3 className="text-lg font-semibold mb-3">Información del Cliente</h3>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm text-gray-600 mb-1">Seleccionar Cliente</label>
+                                                    <select 
+                                                        value={facturaData.cliente.id}
+                                                        onChange={(e) => handleClienteSelect(e.target.value)}
+                                                        className="p-2 border border-gray-300 rounded-md"
+                                                        required
+                                                    >
+                                                        <option value="">Seleccione un cliente</option>
+                                                        {clientes
+                                                            .filter(cliente => cliente.rol === 'cliente')
+                                                            .map(cliente => (
+                                                                <option key={cliente.id} value={cliente.id}>
+                                                                    {cliente.name}
+                                                                </option>
+                                                            ))
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Items de la factura */}
+                                        <div className="border-t pt-4 mt-2">
+                                            <h3 className="text-lg font-semibold mb-3">Agregar Item</h3>
+                                            
+                                            {/* Formulario para nuevo item */}
+                                            <div className="grid grid-cols-4 gap-2">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm text-gray-600 mb-1">Descripción</label>
+                                                    <input 
+                                                        type="text" 
+                                                        name="descripcion"
+                                                        value={nuevoItem.descripcion}
+                                                        onChange={handleItemChange}
+                                                        className="p-2 border border-gray-300 rounded-md"
+                                                        placeholder="Producto/Servicio"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm text-gray-600 mb-1">Cantidad</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="cantidad"
+                                                        value={nuevoItem.cantidad === 0 ? '' : nuevoItem.cantidad}
+                                                        onChange={handleItemChange}
+                                                        className="p-2 border border-gray-300 rounded-md"
+                                                        min="0"
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm text-gray-600 mb-1">Precio Unit.</label>
+                                                    <input 
+                                                        type="number" 
+                                                        name="precioUnitario"
+                                                        value={nuevoItem.precioUnitario === 0 ? '' : nuevoItem.precioUnitario}
+                                                        onChange={handleItemChange}
+                                                        className="p-2 border border-gray-300 rounded-md"
+                                                        min="0"
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm text-gray-600 mb-1">Total</label>
+                                                    <input 
+                                                        type="number" 
+                                                        value={nuevoItem.precio === 0 ? '' : nuevoItem.precio}
+                                                        className="p-2 border border-gray-300 rounded-md bg-gray-100"
+                                                        disabled
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <button 
+                                                type="button"
+                                                onClick={handleAgregarItem}
+                                                className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 w-fit mt-2"
+                                            >
+                                                + Agregar Item
+                                            </button>
+                                        </div>
+
+                                        {/* Totales */}
+                                        <div className="border-t pt-4 mt-2">
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex justify-between">
+                                                    <span className="font-semibold">Subtotal:</span>
+                                                    <span>${facturaData.subtotal}</span>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <span className="font-semibold">Impuestos (19%):</span>
+                                                    <span>${facturaData.impuestos}</span>
+                                                </div>
+                                                <div className="flex justify-between text-lg font-bold">
+                                                    <span>Total:</span>
+                                                    <span>${facturaData.total}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button 
+                                            type="submit"
+                                            className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600 mt-4"
+                                        >
+                                            Generar Factura
+                                        </button>
+                                    </form>
+                                </div>
+                                <div className="w-[400px] h-[500px] bg-white rounded-lg shadow-lg p-4 flex flex-col">
+                                    <div className="w-full flex justify-center text-3xl font-bold mb-4">
+                                        Productos agregados
+                                    </div>
+                                    
+                                    {facturaData.items.length === 0 ? (
+                                        <div className="text-center text-gray-500 mt-8">
+                                            No hay productos agregados
+                                        </div>
+                                    ) : (
+                                        <div className="flex-1 overflow-y-auto pr-2">
+                                            <div className="flex flex-col gap-3">
+                                                {facturaData.items.map((item, index) => (
+                                                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <span className="font-semibold">{item.descripcion}</span>
+                                                            <button 
+                                                                onClick={() => handleEliminarItem(index)}
+                                                                className="text-red-500 hover:text-red-700"
+                                                            >
+                                                                <MdDelete className="text-xl" />
+                                                            </button>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                                                            <div>Cantidad: {item.cantidad}</div>
+                                                            <div>Precio Unit: ${item.precioUnitario}</div>
+                                                            <div className="col-span-2 text-right font-semibold text-black">
+                                                                Total: ${item.precio}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )
                     }
