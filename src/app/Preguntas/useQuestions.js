@@ -87,11 +87,7 @@ const useQuestions = () => {
                 if (!usuarioEncontrado) {
                     throw new Error('Usuario no encontrado');
                 }
-        
                 setUserLoged(usuarioEncontrado);
-                
-                router.replace('/Preguntas', undefined, { shallow: true });
-                
             } catch (error) {
                 console.error('Error al obtener usuario:', error);
                 toast.error('Error al obtener información del usuario');
