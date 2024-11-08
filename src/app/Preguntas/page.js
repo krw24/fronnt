@@ -12,6 +12,7 @@ import Modal from "../../components/modal/Modal.js"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
 
+
 const Preguntas = () => {
 
 
