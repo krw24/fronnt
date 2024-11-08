@@ -20,10 +20,24 @@ const usePage = () => {
     }, [users])
 
     const getUsers = async () => {
-        const response = await fetch('http://localhost:3001/usuarios')
-        console.log(response)
-        const data = await response.json()
-        setUsers(data)
+        try {
+            const response = await fetch('http://localhost:3001/usuarios', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setUsers(data);
+        } catch (error) {
+            console.error('Error al obtener usuarios:', error);
+            toast.error('Error al cargar los usuarios');
+        }
     }
 
     const togglePasswordVisibility = () => {
