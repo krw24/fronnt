@@ -8,6 +8,7 @@ import { FiSearch } from "react-icons/fi";
 import useHome from "./useHome.js";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Toaster } from "react-hot-toast";
+import { ChatAdmin } from "../../components/chat/ChatAdmin.js";
 
 const Home = () => {
 
@@ -544,7 +545,7 @@ const Home = () => {
                         selected === 2 &&
                         (
                             <div className="w-full h-full bg-blue-500">
-                                
+                                <ChatAdmin />
                             </div>
                         )
                     }

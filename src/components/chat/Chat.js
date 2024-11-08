@@ -1,7 +1,7 @@
 "use client";
 import useChatLogic from '../../app/Preguntas/chatLogic';
 
-export default function Chat({ userLoged, chatIsOpen, setChatIsOpen }) {
+export const Chat = ({ userLoged, chatIsOpen, setChatIsOpen }) => {
     const {
         messages,
         inputMessage,
