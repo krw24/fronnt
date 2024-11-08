@@ -25,13 +25,38 @@ export const ChatAdmin = ({ role }) => {
     closeChat,
   } = useChatAdmin(role, userLoged);
 
-  // const handleSendMessage = (e) => {
-  //   e.preventDefault();
-  //   if (!newMessage.trim()) return;
-  //   sendMessage(selectedChat.id, newMessage);
-  //   setNewMessage("");
-  // };
+  useEffect(() => {
+    console.log('Usuario logueado:', userLoged);
+    if (!userLoged?.id) {
+      toast.error('No hay usuario logueado');
+    }
+  }, [userLoged]);
+  
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedChat) return;
 
+    try {
+      await sendMessage(selectedChat.id, newMessage);
+      setNewMessage(""); // Limpiar el input solo si el envío fue exitoso
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error);
+      toast.error("No se pudo enviar el mensaje");
+    }
+  };
+
+
+  const handleChatSelection = async (chat) => {
+    setIsAssigning(true);
+    try {
+      await handleSelectChat(chat);
+    } catch (error) {
+      console.error("Error al seleccionar chat:", error);
+      toast.error("Error al seleccionar el chat");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   // Scroll automático mejorado
   const scrollToBottom = () => {
@@ -130,7 +155,7 @@ export const ChatAdmin = ({ role }) => {
                 <div className="flex items-center gap-2">
                   {role === 'admin' && (
                     <button
-                      onClick={() => {/* ... código existente ... */}}
+                      onClick={() => {/* ... código existente ... */ }}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
                     >
                       <BiTransfer />
@@ -138,14 +163,14 @@ export const ChatAdmin = ({ role }) => {
                     </button>
                   )}
                   <button
-                    onClick={() => {/* ... código existente ... */}}
+                    onClick={() => {/* ... código existente ... */ }}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
                   >
                     <HiTicket />
                     Crear Ticket
                   </button>
                   <button
-                    onClick={() => {/* ... código existente ... */}}
+                    onClick={() => {/* ... código existente ... */ }}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                   >
                     <MdClose />
@@ -174,9 +199,8 @@ export const ChatAdmin = ({ role }) => {
                       {msg.sender_name}
                     </p>
                     <p className="text-sm">{msg.message}</p>
-                    <p className={`text-xs mt-2 ${
-                      msg.sender_id === userLoged.id ? "text-blue-100" : "text-gray-500"
-                    }`}>
+                    <p className={`text-xs mt-2 ${msg.sender_id === userLoged.id ? "text-blue-100" : "text-gray-500"
+                      }`}>
                       {new Date(msg.created_at).toLocaleTimeString()}
                     </p>
                   </div>
@@ -199,7 +223,7 @@ export const ChatAdmin = ({ role }) => {
                 />
                 <button
                   type="submit"
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() || !selectedChat}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FiSend />
