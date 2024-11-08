@@ -42,7 +42,12 @@ const Home = () => {
         handleEditPregunta,
         editPregunta,
         setEditPregunta,
-        handleUpdatePregunta
+        handleUpdatePregunta,
+
+        preguntasActuales,
+        paginaActualPreguntas,
+        cambiarPaginaPreguntas,
+        totalPaginasPreguntas,
     } = useHome();
 
 
@@ -370,6 +375,7 @@ const Home = () => {
                                                 <th className="py-3 px-6">ID</th>
                                                 <th className="py-3 px-6">Id Usuario</th>
                                                 <th className="py-3 px-6">Contestado por</th>
+                                                <th className="py-3 px-6">Tipo</th>
                                                 <th className="py-3 px-6">Pregunta</th>
                                                 <th className="py-3 px-6">Respuesta</th>
                                                 <th className="py-3 px-6">Estado</th>
@@ -377,7 +383,7 @@ const Home = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="text-gray-600 text-md  font-normal">
-                                            {preguntas.map((pregunta) => (
+                                            {preguntasActuales.map((pregunta) => (
                                                 <tr
                                                     key={pregunta.id}
                                                     className="border-b border-gray-200 hover:bg-gray-100"
@@ -386,9 +392,18 @@ const Home = () => {
                                                         {pregunta.id}
                                                     </td>
                                                     <td className="py-3 px-6 text-left">{pregunta.user_id}</td>
-                                                    <td className="py-3 px-6 text-left">{pregunta.support_name}</td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.support_name ? pregunta.support_name : 'Sin responder'
+                                                        }
+                                                    </td>
+                                                    <td className="py-3 px-6 text-left">{pregunta.type}</td>
                                                     <td className="py-3 px-6 text-left">{formatText(pregunta.description)}</td>
-                                                    <td className="py-3 px-6 text-left">{formatText(pregunta.support_response)}</td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.support_response ? formatText(pregunta.support_response) : 'Sin responder'
+                                                        }
+                                                    </td>
                                                     <td className="py-3 px-6 text-left">{pregunta.status}</td>
                                                     <td className="py-3 px-6 text-center flex justify-center gap-2">
                                                         <button
@@ -417,21 +432,21 @@ const Home = () => {
 
                                         {(() => {
                                             let paginas = [];
-                                            if (totalPaginas <= 5) {
+                                            if (totalPaginasPreguntas <= 5) {
                                                 // Si hay 5 o menos páginas, mostrar todas
-                                                paginas = [...Array(totalPaginas)].map((_, i) => i + 1);
+                                                paginas = [...Array(totalPaginasPreguntas)].map((_, i) => i + 1);
                                             } else {
                                                 // Si estamos en las primeras 3 páginas
-                                                if (paginaActual <= 3) {
-                                                    paginas = [1, 2, 3, '...', totalPaginas];
+                                                if (paginaActualPreguntas <= 3) {
+                                                    paginas = [1, 2, 3, '...', totalPaginasPreguntas];
                                                 }
                                                 // Si estamos en las últimas 3 páginas
-                                                else if (paginaActual >= totalPaginas - 2) {
-                                                    paginas = [1, '...', totalPaginas - 2, totalPaginas - 1, totalPaginas];
+                                                else if (paginaActualPreguntas >= totalPaginasPreguntas - 2) {
+                                                    paginas = [1, '...', totalPaginasPreguntas - 2, totalPaginasPreguntas - 1, totalPaginasPreguntas];
                                                 }
                                                 // Si estamos en medio
                                                 else {
-                                                    paginas = [1, '...', paginaActual, '...', totalPaginas];
+                                                    paginas = [1, '...', paginaActualPreguntas, '...', totalPaginasPreguntas];
                                                 }
                                             }
 
@@ -441,8 +456,8 @@ const Home = () => {
                                                 ) : (
                                                     <button
                                                         key={index}
-                                                        onClick={() => cambiarPagina(pagina)}
-                                                        className={`w-8 h-8 rounded-full ${paginaActual === pagina
+                                                        onClick={() => cambiarPaginaPreguntas(pagina)}
+                                                        className={`w-8 h-8 rounded-full ${paginaActualPreguntas === pagina
                                                             ? 'bg-[#7F88D5] text-white'
                                                             : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
                                                             }`}
@@ -455,8 +470,8 @@ const Home = () => {
 
                                         <button
                                             onClick={() => cambiarPagina(paginaActual + 1)}
-                                            disabled={paginaActual === totalPaginas}
-                                            className={`p-2 rounded-full ${paginaActual === totalPaginas
+                                            disabled={paginaActualPreguntas === totalPaginasPreguntas}
+                                            className={`p-2 rounded-full ${paginaActualPreguntas === totalPaginasPreguntas
                                                 ? 'text-gray-400 cursor-not-allowed'
                                                 : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
                                                 }`}
