@@ -8,12 +8,12 @@ import { Chat } from "../../components/chat/Chat.js";
 import { Toaster } from "react-hot-toast";
 
 const Preguntas = () => {
-  const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions();
+  const { userLoged, chatIsOpen, setChatIsOpen, onSubmit, handleSubmit, register } = useQuestions();
   const chatLogic = useChatClient(userLoged, chatIsOpen);
 
   return (
     <div className="w-full h-screen flex flex-col relative">
-      <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-200">
+      <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-300">
         <div className="w-full text-6xl  font-semibold bg-indigo-200">
           Soporte
         </div>
