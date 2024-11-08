@@ -12,7 +12,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
   const lastMessageCount = useRef(0);
 
   // Reducimos el intervalo a 1 segundo para actualizaciones más rápidas
-  const INTERVALO_ACTUALIZACION = 1000;
+  const INTERVALO_ACTUALIZACION = 2000;
   const API_URL = "http://localhost:3001";
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -85,7 +85,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
     try {
       const response = await fetch(`${API_URL}/chat/${chatId}`);
       const data = await response.json();
-
+      console.log("data", data);
       if (data.support_name) {
         setAgenteAsignado({ nombre: data.support_name });
         setEsperandoAgente(false);
