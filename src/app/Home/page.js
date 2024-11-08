@@ -49,6 +49,9 @@ const Home = () => {
         paginaActualPreguntas,
         cambiarPaginaPreguntas,
         totalPaginasPreguntas,
+        estadoSeleccionado,
+        setEstadoSeleccionado,
+        statePregunta
     } = useHome();
 
     const SkeletonCell = () => {
@@ -90,7 +93,7 @@ const Home = () => {
                 <div className="w-full h-20 bg-slate-200">
                 <h1>Menu Proximamente</h1>
                 </div>
-                <div className="w-full h-[calc(100vh-80px)] bg-slate-100">
+                <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-100">
                     {
                         selected === 0 &&
                         (
@@ -365,18 +368,24 @@ const Home = () => {
                             <div className="container mx-auto pt-6 flex flex-col gap-4">
                                 <div className="w-full flex flex-row gap-2 items-center">
                                     <div> 
-                                        <select className="p-2 border border-gray-300 rounded-md outline-none">
-                                            <option disabled value="">Seleccionar estado</option>
-                                            <option value="pendiente">Pendientes</option>
-                                            <option value="respondido">Respondidos</option>
+                                        <select
+                                            className="p-2 border border-gray-300 rounded-md outline-none"
+                                            value={estadoSeleccionado}
+                                            onChange={(e) => setEstadoSeleccionado(e.target.value)}
+                                        >
+                                            <option defaultValue value='0'>Ninguno</option>
+                                            <option value="1">Preguntas</option>
+                                            <option value="2">Quejas</option>
+                                            <option value="3">Reclamos</option>
                                         </select>
                                     </div>
                                     <div className="relative flex flex-row gap-2 items-center">
                                         <FiSearch className="absolute left-2 text-2xl text-gray-500" />
                                         <input
+                                            disabled={estadoSeleccionado != 0 ? true : false}
                                             className="p-2 pl-10 pr-4 border-[1.5px] border-gray-300 rounded-2xl outline-none"
                                             type="text"
-                                            placeholder="Buscar Preguntas..."
+                                            placeholder="Buscar..."
                                             value={busqueda}
                                             onChange={(e) => setBusqueda(e.target.value)}
                                         />
@@ -504,15 +513,16 @@ const Home = () => {
                                         <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
                                         <form
                                             className="w-[500px] flex flex-col justify-center gap-4"
-                                            onSubmit={handleUpdateCliente}>
+                                            onSubmit={handleUpdatePregunta}>
                                             
                                             <div className="relative ">
                                                 <textarea
+                                                    disabled={true}
                                                     id="description"
                                                     rows={4}
-                                                    className="min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
+                                                    className="min-h-[111px] cursor-not-allowed block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
                                                     placeholder=" "
-                                                    value={editPregunta.description}
+                                                    value={editPregunta?.description}
                                                     onChange={(e) => setEditPregunta({ ...editPregunta, description: e.target.value })}
                                                 />
                                                 <label
@@ -525,10 +535,11 @@ const Home = () => {
                                                 <textarea
                                                     id="description"
                                                     rows={4}
-                                                    className="min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
-                                                        placeholder=" "
-                                                        value={editPregunta?.support_response}
-                                                        onChange={(e) => setEditPregunta({ ...editPregunta, support_response: e.target.value })}
+                                                    disabled={statePregunta != 'pendiente' ? true : false}
+                                                    className={`${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''} min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer`}
+                                                    placeholder=" "
+                                                    value={editPregunta?.support_response || ''}
+                                                    onChange={(e) => setEditPregunta({ ...editPregunta, support_response: e.target.value })}
                                                 />
                                                 <label
                                                     htmlFor="description"
@@ -544,8 +555,9 @@ const Home = () => {
                                                     Cancelar
                                                 </button>
                                                 <button
+                                                    disabled={statePregunta != 'pendiente' ? true : false}
                                                     type="submit"
-                                                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded-md">
+                                                    className={`bg-blue-500 text-white font-bold py-2 px-4 rounded-md ${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''}`}>
                                                     Enviar respuesta
                                                 </button>
                                             </div>

@@ -1,12 +1,15 @@
 "use client";
-import { FiLogOut } from "react-icons/fi";
+
+import { useEffect } from "react"; 
+import { FiSearch, FiLogOut } from "react-icons/fi";
 import useQuestions from "./useQuestions";
+import useChatClient from "./useChatClient";
 import { Chat } from "../../components/chat/Chat.js";
 import { Toaster } from "react-hot-toast";
 
 const Preguntas = () => {
-  const { userLoged, chatIsOpen, setChatIsOpen, register, handleSubmit, onSubmit } = useQuestions();
-  console.log("usuario logueado:", userLoged);
+  const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions();
+  const chatLogic = useChatClient(userLoged, chatIsOpen);
 
   return (
     <div className="w-full h-screen flex flex-col relative">
@@ -94,24 +97,36 @@ const Preguntas = () => {
           userLoged={userLoged}
           chatIsOpen={chatIsOpen}
           setChatIsOpen={setChatIsOpen}
+          {...chatLogic}
         />
       ) : (
         <div className="absolute flex flex-col bottom-3 right-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-10 text-indigo-500 cursor-pointer"
-            onClick={() => setChatIsOpen(true)}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-            />
-          </svg>
+          <div className="relative">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="size-10 text-indigo-500 cursor-pointer hover:text-indigo-600 transition-colors"
+              onClick={() => setChatIsOpen(true)}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+              />
+            </svg>
+            {chatLogic.mensajesNoLeidos > 0 ? (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-6 h-6 flex items-center justify-center px-2 animate-pulse">
+                {chatLogic.mensajesNoLeidos}
+              </span>
+            ) : (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-6 h-6 flex items-center justify-center px-2 animate-pulse">
+                0
+              </span>
+            )}
+          </div>
         </div>
       )}
       <Toaster position="top-right" />
