@@ -51,6 +51,12 @@ const Home = () => {
         totalPaginasPreguntas,
     } = useHome();
 
+    const SkeletonCell = () => {
+        return (
+            <div className="bg-gray-300 h-6 w-full rounded-full mb-4 animate-pulse"></div>
+        );
+    };
+
 
     return (
         <div className="w-full h-screen  flex flex-row ">
@@ -355,9 +361,16 @@ const Home = () => {
                     {
                         selected === 1 &&
                         (
+                            
                             <div className="container mx-auto pt-6 flex flex-col gap-4">
                                 <div className="w-full flex flex-row gap-2 items-center">
-                                    
+                                    <div> 
+                                        <select className="p-2 border border-gray-300 rounded-md outline-none">
+                                            <option disabled value="">Seleccionar estado</option>
+                                            <option value="pendiente">Pendientes</option>
+                                            <option value="respondido">Respondidos</option>
+                                        </select>
+                                    </div>
                                     <div className="relative flex flex-row gap-2 items-center">
                                         <FiSearch className="absolute left-2 text-2xl text-gray-500" />
                                         <input
@@ -395,17 +408,20 @@ const Home = () => {
                                                     <td className="py-3 px-6 text-left">{pregunta.user_id}</td>
                                                     <td className="py-3 px-6 text-left">
                                                         {
-                                                            pregunta.support_name ? pregunta.support_name : 'Sin responder'
+                                                            pregunta.support_name ? pregunta.support_name : <SkeletonCell />
                                                         }
                                                     </td>
                                                     <td className="py-3 px-6 text-left">{pregunta.type}</td>
                                                     <td className="py-3 px-6 text-left">{formatText(pregunta.description)}</td>
                                                     <td className="py-3 px-6 text-left">
                                                         {
-                                                            pregunta.support_response ? formatText(pregunta.support_response) : 'Sin responder'
+                                                            pregunta.support_response ? formatText(pregunta.support_response) : <SkeletonCell />
                                                         }
                                                     </td>
-                                                    <td className="py-3 px-6 text-left">{pregunta.status}</td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.status == 'pendiente' ? <div className="bg-orange-400 text-black font-bold py-1 px-2 flex justify-center rounded-md">Pendiente</div> : <div className="bg-indigo-300 text-white font-bold py-1 px-4 flex justify-center rounded-md">Respondido</div>
+                                                        }</td>
                                                     <td className="py-3 px-6 text-center flex justify-center gap-2">
                                                         <button
                                                             onClick={() => handleEditPregunta(pregunta.id)}
@@ -511,7 +527,7 @@ const Home = () => {
                                                     rows={4}
                                                     className="min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
                                                         placeholder=" "
-                                                        value={editPregunta.support_response}
+                                                        value={editPregunta?.support_response}
                                                         onChange={(e) => setEditPregunta({ ...editPregunta, support_response: e.target.value })}
                                                 />
                                                 <label
