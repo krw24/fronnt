@@ -1,5 +1,5 @@
 "use client";
-import useChatLogic from '../../app/Preguntas/chatLogic';
+import useChatLogic from '../../app/Preguntas/useChatClient';
 
 export const Chat = ({ userLoged, chatIsOpen, setChatIsOpen }) => {
     const {
