@@ -21,6 +21,29 @@ const useHome = () => {
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('');
   const [statePregunta, setStatePregunta] = useState('');
 
+  // Nuevos estados para la facturación
+  const [facturaData, setFacturaData] = useState({
+    numeroFactura: '',
+    fecha: new Date().toISOString().split('T')[0],
+    cliente: {
+      id: '',
+      nombre: '',
+      direccion: '',
+      telefono: ''
+    },
+    items: [],
+    subtotal: 0,
+    impuestos: 0,
+    total: 0
+  });
+
+  const [nuevoItem, setNuevoItem] = useState({
+    descripcion: '',
+    cantidad: 0,
+    precioUnitario: 0,
+    total: 0
+  });
+
   
   useEffect(() => {
     if(estadoSeleccionado == 0){
@@ -109,6 +132,10 @@ const useHome = () => {
   useEffect(()=>{
     console.log('clientesFiltrados', clientesFiltrados)
   },[clientesFiltrados])
+
+  const sendFactura = async (factura) => {
+    console.log('factura', factura)
+  }
 
   const getUserLoged = async () => {
     const id = searchParams.get('id');
@@ -437,6 +464,133 @@ const useHome = () => {
     setPaginaActual(numeroPagina);
   };
 
+  // Manejador para cuando se selecciona un cliente
+  const handleClienteSelect = (clienteId) => {
+    const clienteSeleccionado = clientes.find(c => c.id === Number(clienteId));
+    if (clienteSeleccionado) {
+      setFacturaData(prev => ({
+        ...prev,
+        cliente: {
+          id: clienteSeleccionado.id,
+          nombre: clienteSeleccionado.name,
+          direccion: clienteSeleccionado.address,
+          telefono: clienteSeleccionado.contact
+        }
+      }));
+    }
+  };
+
+  // Manejador para los campos del nuevo item
+  const handleItemChange = (e) => {
+    const { name, value } = e.target;
+    const newValue = name === 'descripcion' ? value : Number(value);
+    
+    setNuevoItem(prev => {
+      const updated = { ...prev, [name]: newValue };
+      
+      // Calcular precio total del item
+      if (name === 'cantidad' || name === 'precioUnitario') {
+        updated.precio = updated.cantidad * updated.precioUnitario;
+      }
+      
+      return updated;
+    });
+  };
+
+  // Agregar nuevo item a la factura
+  const handleAgregarItem = () => {
+    if (!nuevoItem.descripcion || nuevoItem.cantidad <= 0 || nuevoItem.precioUnitario <= 0) {
+      toast.error('Por favor complete todos los campos del item correctamente');
+      return;
+    }
+
+    setFacturaData(prev => {
+      const updatedItems = [...prev.items, nuevoItem];
+      const subtotal = updatedItems.reduce((sum, item) => sum + item.precio, 0);
+      const impuestos = subtotal * 0.19; // 19% de impuestos
+      
+      return {
+        ...prev,
+        items: updatedItems,
+        subtotal: subtotal,
+        impuestos: impuestos,
+        total: subtotal + impuestos
+      };
+    });
+
+    // Limpiar el formulario de nuevo item
+    setNuevoItem({
+      descripcion: '',
+      cantidad: 0,
+      precioUnitario: 0,
+      precio: 0
+    });
+  };
+
+  // Eliminar item de la factura
+  const handleEliminarItem = (index) => {
+    setFacturaData(prev => {
+      const updatedItems = prev.items.filter((_, i) => i !== index);
+      const subtotal = updatedItems.reduce((sum, item) => sum + item.precio, 0);
+      const impuestos = subtotal * 0.19;
+
+      return {
+        ...prev,
+        items: updatedItems,
+        subtotal: subtotal,
+        impuestos: impuestos,
+        total: subtotal + impuestos
+      };
+    });
+  };
+
+  // Generar factura
+  const handleGenerarFactura = async (e) => {
+    e.preventDefault();
+
+    console.log('facturaData', facturaData)
+    return;
+    if (!facturaData.cliente.id || facturaData.items.length === 0) {
+      toast.error('Por favor seleccione un cliente y agregue al menos un item');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3001/facturas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(facturaData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al generar la factura');
+      }
+
+      toast.success('Factura generada exitosamente');
+      
+      // Limpiar el formulario
+      setFacturaData({
+        numeroFactura: '',
+        fecha: new Date().toISOString().split('T')[0],
+        cliente: {
+          id: '',
+          nombre: '',
+          direccion: '',
+          telefono: ''
+        },
+        items: [],
+        subtotal: 0,
+        impuestos: 0,
+        total: 0
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Error al generar la factura');
+    }
+  };
+
 
 
 
@@ -479,7 +633,17 @@ const useHome = () => {
       totalPaginasPreguntas,
       estadoSeleccionado,
       setEstadoSeleccionado,
-      statePregunta
+      statePregunta,
+
+      // Nuevos returns para la facturación
+      facturaData,
+      setFacturaData,
+      nuevoItem,
+      handleClienteSelect,
+      handleItemChange,
+      handleAgregarItem,
+      handleEliminarItem,
+      handleGenerarFactura,
     }
 }
 

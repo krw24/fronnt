@@ -58,7 +58,7 @@ const usePage = () => {
                 } else if (user.rol === 'cliente') {
                     router.push(`/Preguntas?id=${user.id}`);
                 }
-            }, 2000);
+            }, 1000);
         } else {
             toast.dismiss(loadingToast)
             toast.error('Usuario no encontrado')
