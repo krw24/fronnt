@@ -2,7 +2,7 @@
 
 import { FiSearch, FiLogOut } from "react-icons/fi";
 import useQuestions from "./useQuestions";
-import Chat from "../../components/chat/Chat";
+import { Chat } from "../../components/chat/Chat.js";
 
 const Preguntas = () => {
   const { userLoged, chatIsOpen, setChatIsOpen } = useQuestions();
