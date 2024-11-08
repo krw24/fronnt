@@ -547,47 +547,81 @@ const useHome = () => {
   // Generar factura
   const handleGenerarFactura = async (e) => {
     e.preventDefault();
+    
+    // Validación de fecha
+    const fechaSeleccionada = new Date(facturaData.fecha);
+    const fechaActual = new Date();
+    
+    fechaSeleccionada.setHours(0, 0, 0, 0);
+    fechaActual.setHours(0, 0, 0, 0);
 
-    console.log('facturaData', facturaData)
-    return;
+    if (fechaSeleccionada > fechaActual) {
+        toast.error('No se pueden generar facturas con fecha futura');
+        return;
+    }
+    
     if (!facturaData.cliente.id || facturaData.items.length === 0) {
-      toast.error('Por favor seleccione un cliente y agregue al menos un item');
-      return;
+        toast.error('Por favor seleccione un cliente y agregue al menos un item');
+        return;
     }
 
-    try {
-      const response = await fetch('http://localhost:3001/facturas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(facturaData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al generar la factura');
-      }
-
-      toast.success('Factura generada exitosamente');
-      
-      // Limpiar el formulario
-      setFacturaData({
-        numeroFactura: '',
-        fecha: new Date().toISOString().split('T')[0],
+    // Formatear los datos según espera el backend
+    const facturaFormateada = {
+        numeroFactura: facturaData.numeroFactura,
+        fecha: facturaData.fecha,
         cliente: {
-          id: '',
-          nombre: '',
-          direccion: '',
-          telefono: ''
+            id: facturaData.cliente.id,
+            nombre: facturaData.cliente.nombre,
+            direccion: facturaData.cliente.direccion,
+            telefono: facturaData.cliente.telefono
         },
-        items: [],
-        subtotal: 0,
-        impuestos: 0,
-        total: 0
-      });
+        items: facturaData.items.map(item => ({
+            descripcion: item.descripcion,
+            cantidad: item.cantidad,
+            precioUnitario: item.precioUnitario,
+            precio: item.precio,
+            impuesto: item.precio * 0.19 // 19% de impuesto
+        })),
+        total: facturaData.subtotal,
+        impuestos: facturaData.impuestos,
+        notas: "" // Opcional
+    };
+
+    try {
+        const response = await fetch('http://localhost:3001/factura', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(facturaFormateada)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detalles || 'Error al generar la factura');
+        }
+
+        const resultado = await response.json();
+        toast.success('Factura generada exitosamente');
+        
+        // Limpiar el formulario
+        setFacturaData({
+            numeroFactura: '',
+            fecha: new Date().toISOString().split('T')[0],
+            cliente: {
+                id: '',
+                nombre: '',
+                direccion: '',
+                telefono: ''
+            },
+            items: [],
+            subtotal: 0,
+            impuestos: 0,
+            total: 0
+        });
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error al generar la factura');
+        console.error('Error:', error);
+        toast.error(error.message || 'Error al generar la factura');
     }
   };
 
