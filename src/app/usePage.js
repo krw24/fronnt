@@ -57,6 +57,8 @@ const usePage = () => {
                     router.push(`/Home?id=${user.id}`);
                 } else if (user.rol === 'cliente') {
                     router.push(`/Preguntas?id=${user.id}`);
+                } else if (user.rol === 'tecnico') {
+                    router.push(`/Tecnico?id=${user.id}`)
                 }
             }, 1000);
         } else {

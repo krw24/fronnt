@@ -355,6 +355,7 @@ const Home = () => {
                                             <option value="">Seleccionar rol</option>
                                             <option value="cliente">Cliente</option>
                                             <option value="admin">Administrador</option>
+                                            <option value="tecnico">Tecnico</option>
                                         </select>
                                         <div className="flex justify-end gap-2">
                                             <button
