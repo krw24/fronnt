@@ -71,7 +71,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
       });
 
       const data = await response.json();
-      console.log("data", data);
+      // console.log("data", data);
       const newChatId = data.id;
       setChatId(newChatId);
       await verificarAgenteAsignado(newChatId);
@@ -85,7 +85,7 @@ export default function useChatLogic(userLoged, chatIsOpen) {
     try {
       const response = await fetch(`${API_URL}/chat/${chatId}`);
       const data = await response.json();
-      console.log("data", data);
+      // console.log("data", data);
       if (data.support_name) {
         setAgenteAsignado({ nombre: data.support_name });
         setEsperandoAgente(false);
