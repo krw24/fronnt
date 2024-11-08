@@ -3,7 +3,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-const useQuestions = ({view}) => {
+const useQuestions = (props) => {
 
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -31,8 +31,8 @@ const useQuestions = ({view}) => {
     }, []);
   
     useEffect(() => {
-      getDataInit();
-    }, [view]);
+            getDataInit();
+    }, [props?.view]);
   
 
     useEffect(() => {

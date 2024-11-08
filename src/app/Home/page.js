@@ -101,8 +101,8 @@ const Home = () => {
                 </div>
             </div>
             <div className="flex flex-col w-full h-full bg-indigo-600">
-                <div className="w-full h-20 bg-slate-200">
-                <h1>Menu Proximamente</h1>
+                <div className="w-full h-20 font-semibold flex pl-8 items-center text-5xl bg-slate-200">
+                    Admin
                 </div>
                 <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-100">
                     {

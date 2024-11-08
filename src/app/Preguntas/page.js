@@ -66,7 +66,7 @@ const Preguntas = () => {
       <div className="w-full h-screen flex flex-col">
         <div className="w-full h-24 flex items-center justify-between px-8 font-semibold bg-indigo-300">
           <div className="w-full text-6xl  font-semibold ">
-            Soporte
+            PQR Assist
           </div>
           <div className=" flex items-center flex-row gap-2">
             <div className="w-72 flex items-center gap-2 justify-center">
