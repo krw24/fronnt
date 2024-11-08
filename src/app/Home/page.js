@@ -9,6 +9,9 @@ import useHome from "./useHome.js";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { Toaster } from "react-hot-toast";
 import { ChatAdmin } from "../../components/chat/ChatAdmin.js";
+import { TbMessage2Search, TbClipboardData, TbUsersGroup } from "react-icons/tb";
+import { TbMessages } from "react-icons/tb";
+import { SlLogout } from "react-icons/sl";
 
 const Home = () => {
 
@@ -78,31 +81,31 @@ const Home = () => {
                 <div className="w-full h-20 bg-indigo-500"></div>
                 <div className="w-full h-[calc(100vh-80px)] bg-slate-200 flex flex-col">
                     <div onClick={() => setSelected(0)} className="w-full h-24 bg-indigo-600 flex justify-center items-center text-white border-b-[1.5px] border-indigo-400 cursor-pointer hover:opacity-85 duration-300 ">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-9  ">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
+                        <TbUsersGroup className="text-4xl" />
                     </div>
                     <div onClick={() => setSelected(1)} className="w-full h-24 bg-indigo-600 flex justify-center items-center text-white border-b-[1.5px] border-indigo-400 cursor-pointer hover:opacity-85 duration-300 ">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-9  ">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
+                        <TbMessage2Search className="text-4xl" />
                     </div>
                     <div onClick={() => setSelected(2)} className="w-full h-24 bg-indigo-600 flex justify-center items-center text-white border-b-[1.5px] border-indigo-400 cursor-pointer hover:opacity-85 duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-9  ">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
+                        <TbMessages className="text-4xl" />
                     </div>
                     <div onClick={() => setSelected(3)} className="w-full h-24 bg-indigo-600 flex justify-center items-center text-white border-b-[1.5px] border-indigo-400 cursor-pointer hover:opacity-85 duration-300">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-9  ">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
+                        <TbClipboardData className="text-4xl" />
                     </div>
                     <div className="w-full h-[calc(100vh-100px)] bg-indigo-600"></div>
                 </div>
             </div>
             <div className="flex flex-col w-full h-full bg-indigo-600">
-                <div className="w-full h-20 font-semibold flex pl-8 items-center text-5xl bg-slate-200">
-                    Admin
+                <div className="w-full h-20 font-semibold flex pl-8 items-center justify-between text-5xl bg-slate-200">
+                    <div className="">Admin</div>
+                    <button 
+                        onClick={() => {
+                            localStorage.removeItem("token");
+                            window.location.href = "/";
+                          }}
+                    className="flex flex-row gap-2 items-center text-2xl pr-8">  
+                        <SlLogout />
+                    </button>
                 </div>
                 <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-100">
                     {
@@ -112,7 +115,7 @@ const Home = () => {
                                 <div className="w-full flex flex-row gap-2 items-center">
                                     <div className="w-full flex flex-row justify-between gap-2 items-center">
                                         <div className="text-2xl font-bold flex flex-row gap-2 items-center mb-2">
-                                            <div>Agregar Clientes</div>
+                                            <div>Agregar Usuarios</div>
                                             <button
                                                 className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md"
                                                 onClick={() => setIsModalOpen(true)}>
