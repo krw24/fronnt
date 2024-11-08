@@ -8,11 +8,48 @@ import { Chat } from "../../components/chat/Chat.js";
 import { Toaster } from "react-hot-toast";
 import { TiMessages } from "react-icons/ti";
 import { LuMessageSquarePlus } from "react-icons/lu";
+import Modal from "../../components/modal/Modal.js"
+import usePreguntas from "./usePreguntas";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MdEdit } from "react-icons/md";
 
 const Preguntas = () => {
-  const { userLoged, chatIsOpen, setChatIsOpen, onSubmit, handleSubmit, register } = useQuestions();
+  const { 
+    userLoged, 
+    chatIsOpen, 
+    setChatIsOpen, 
+    onSubmit, 
+    handleSubmit, 
+    register ,
+
+
+    preguntas,
+    formatText,
+    isModalOpen,
+    setIsModalOpen,
+    handleEditPregunta,
+    isEditModalOpen,
+    setIsEditModalOpen,
+    editPregunta,
+    setEditPregunta,
+    busqueda,
+    setBusqueda,
+    preguntasFiltradas,
+    preguntasActuales,
+    paginaActual,
+    cambiarPagina,
+    totalPaginas
+  } = useQuestions();
+
   const [view, setView] = useState(0);
   const chatLogic = useChatClient(userLoged, chatIsOpen);
+
+  const SkeletonCell = () => {
+    return (
+        <div className="bg-gray-300 h-6 w-full rounded-full mb-4 animate-pulse"></div>
+    );
+  };
+
 
   return (
     <div className="w-full h-screen flex flex-row relative">
@@ -110,9 +147,197 @@ const Preguntas = () => {
           }
           {
             view === 1 &&
-            <div className="w-[500px] h-[400px] p-5 bg-black rounded-xl shadow-xl ">
-                
-            </div>
+            (
+              <div className="container mx-auto pt-6 flex flex-col gap-4">
+                                <div className="w-full flex flex-row gap-2 items-center">
+                                    <div className="relative flex flex-row gap-2 items-center">
+                                        <FiSearch className="absolute left-2 text-2xl text-gray-500" />
+                                        <input
+                                            className="p-2 pl-10 pr-4 border-[1.5px] border-gray-300 rounded-2xl outline-none"
+                                            type="text"
+                                            placeholder="Buscar..."
+                                            value={busqueda}
+                                            onChange={(e) => setBusqueda(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="min-w-full overflow-y-auto shadow-lg mt-2 shadow-slate-300 rounded-lg">
+                                    <table className="min-w-full table-auto bg-white  rounded-lg">
+                                        <thead>
+                                            <tr className="bg-gray-200 text-left text-gray-600 uppercase text-sm leading-normal">
+                                                <th className="py-3 px-6">ID</th>
+                                                <th className="py-3 px-6">Id Usuario</th>
+                                                <th className="py-3 px-6">Contestado por</th>
+                                                <th className="py-3 px-6">Tipo</th>
+                                                <th className="py-3 px-6">Pregunta</th>
+                                                <th className="py-3 px-6">Respuesta</th>
+                                                <th className="py-3 px-6">Estado</th>
+                                                <th className="py-3 px-6">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-gray-600 text-md  font-normal">
+                                            {preguntasActuales.map((pregunta) => (
+                                                <tr
+                                                    key={pregunta.id}
+                                                    className="border-b border-gray-200 hover:bg-gray-100"
+                                                >
+                                                    <td className="py-3 px-6 text-left whitespace-nowrap">
+                                                        {pregunta.id}
+                                                    </td>
+                                                    <td className="py-3 px-6 text-left">{pregunta.user_id}</td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.support_name ? pregunta.support_name : <SkeletonCell />
+                                                        }
+                                                    </td>
+                                                    <td className="py-3 px-6 text-left">{pregunta.type}</td>
+                                                    <td className="py-3 px-6 text-left">{formatText(pregunta.description)}</td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.support_response ? formatText(pregunta.support_response) : <SkeletonCell />
+                                                        }
+                                                    </td>
+                                                    <td className="py-3 px-6 text-left">
+                                                        {
+                                                            pregunta.status == 'pendiente' ? <div className="bg-orange-400 text-black font-bold py-1 px-2 flex justify-center rounded-md">Pendiente</div> : <div className="bg-indigo-300 text-white font-bold py-1 px-4 flex justify-center rounded-md">Respondido</div>
+                                                        }</td>
+                                                    <td className="py-3 px-6 text-center flex justify-center gap-2">
+                                                        <button
+                                                            onClick={() => handleEditPregunta(pregunta.id)}
+                                                            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full">
+                                                            <MdEdit />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="w-full flex justify-end">
+                                    <div className="flex items-center gap-2 bg-white p-4 rounded-lg text-lg shadow">
+                                        <button
+                                            onClick={() => cambiarPagina(paginaActual - 1)}
+                                            disabled={paginaActual === 1}
+                                            className={`p-2 rounded-full ${paginaActual === 1
+                                                ? 'text-gray-400 cursor-not-allowed'
+                                                : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                                                }`}
+                                        >
+                                            <IoIosArrowBack />
+                                        </button>
+
+                                        {(() => {
+                                            let paginas = [];
+                                            if (totalPaginas <= 5) {
+                                                // Si hay 5 o menos páginas, mostrar todas
+                                                paginas = [...Array(totalPaginas)].map((_, i) => i + 1);
+                                            } else {
+                                                // Si estamos en las primeras 3 páginas
+                                                if (paginaActual <= 3) {
+                                                    paginas = [1, 2, 3, '...', totalPaginas];
+                                                }
+                                                // Si estamos en las últimas 3 páginas
+                                                else if (paginaActual >= totalPaginas - 2) {
+                                                    paginas = [1, '...', totalPaginas - 2, totalPaginas - 1, totalPaginas];
+                                                }
+                                                // Si estamos en medio
+                                                else {
+                                                    paginas = [1, '...', paginaActual, '...', totalPaginas];
+                                                }
+                                            }
+
+                                            return paginas.map((pagina, index) => (
+                                                pagina === '...' ? (
+                                                    <span key={`dots-${index}`} className="px-2 text-gray-500">...</span>
+                                                ) : (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => cambiarPagina(pagina)}
+                                                        className={`w-8 h-8 rounded-full ${paginaActual === pagina
+                                                            ? 'bg-[#7F88D5] text-white'
+                                                            : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                                                            }`}
+                                                    >
+                                                        {pagina}
+                                                    </button>
+                                                )
+                                            ));
+                                        })()}
+
+                                        <button
+                                            onClick={() => cambiarPagina(paginaActual + 1)}
+                                            disabled={paginaActual === totalPaginas}
+                                            className={`p-2 rounded-full ${paginaActual === totalPaginas
+                                                ? 'text-gray-400 cursor-not-allowed'
+                                                : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                                                }`}
+                                        >
+                                            <IoIosArrowForward />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {isEditModalOpen === true ? (
+                                    <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
+                                        <h2 className="text-2xl font-bold mb-2">Editar Usuario</h2>
+                                        <div className="w-full h-[1px] bg-gray-300 mb-3"></div>
+                                        <form
+                                            className="w-[500px] flex flex-col justify-center gap-4"
+                                            onSubmit={handleUpdatePregunta}>
+                                            
+                                            <div className="relative ">
+                                                <textarea
+                                                    disabled={true}
+                                                    id="description"
+                                                    rows={4}
+                                                    className="min-h-[111px] cursor-not-allowed block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer"
+                                                    placeholder=" "
+                                                    value={editPregunta?.description}
+                                                    onChange={(e) => setEditPregunta({ ...editPregunta, description: e.target.value })}
+                                                />
+                                                <label
+                                                    htmlFor="description"
+                                                    className="absolute text-md text-slate-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-[#a5aefc]  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-[20%] peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-2">
+                                                    Descripcion
+                                                </label>
+                                            </div>
+                                            <div className="relative ">
+                                                <textarea
+                                                    id="description"
+                                                    rows={4}
+                                                    disabled={statePregunta != 'pendiente' ? true : false}
+                                                    className={`${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''} min-h-[111px] block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-[2.5px] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#a5aefc] focus:border-[2.5px] peer`}
+                                                    placeholder=" "
+                                                    value={editPregunta?.support_response || ''}
+                                                    onChange={(e) => setEditPregunta({ ...editPregunta, support_response: e.target.value })}
+                                                />
+                                                <label
+                                                    htmlFor="description"
+                                                    className="absolute text-md text-slate-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-[#a5aefc]  peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-[20%] peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-2">
+                                                    Respuesta
+                                                </label>
+                                            </div>
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsEditModalOpen(false)}
+                                                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-md">
+                                                    Cancelar
+                                                </button>
+                                                <button
+                                                    disabled={statePregunta != 'pendiente' ? true : false}
+                                                    type="submit"
+                                                    className={`bg-blue-500 text-white font-bold py-2 px-4 rounded-md ${statePregunta != 'pendiente' ? 'cursor-not-allowed' : ''}`}>
+                                                    Enviar respuesta
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </Modal>
+                                ) :
+                                    null
+                                }
+                            </div>
+            )
           }
             
         </div>

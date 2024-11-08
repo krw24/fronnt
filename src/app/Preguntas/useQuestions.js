@@ -12,6 +12,29 @@ const useQuestions = () => {
     const [chatIsOpen, setChatIsOpen] = useState(false)
     const [questions, setQuestions] = useState([])
 
+    const [preguntas, setPreguntas] = useState([]);
+    
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [refreshData, setRefreshData] = useState(false);
+    const [busqueda, setBusqueda] = useState('');
+    const [preguntasFiltradas, setPreguntasFiltradas] = useState(preguntas);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const [editPregunta, setEditPregunta] = useState({
+      
+    }); 
+
+
+    
+    useEffect(() => {
+        getDataInit();
+    }, []);
+  
+    useEffect(() => {
+      getDataInit();
+    }, [refreshData]);
+  
+
     useEffect(() => {
         getUserLoged()
     }, [])
@@ -19,6 +42,15 @@ const useQuestions = () => {
     useEffect(() => {
         console.log('userLoged', userLoged)
     }, [userLoged])
+
+    useEffect(() => {
+        const resultados = preguntas.filter(pregunta =>
+          pregunta.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+          pregunta.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
+        );
+        setPreguntasFiltradas(resultados);
+      }, [busqueda, preguntas]);
+    
 
     const onSubmit = async (data) => {
 
@@ -71,6 +103,7 @@ const useQuestions = () => {
 
     }
 
+
     const getUserLoged = async () => {
         const id = searchParams.get('id');
         if (id) {
@@ -96,13 +129,96 @@ const useQuestions = () => {
         }
     }
 
+
+    const getDataInit = async () => {
+        try {
+          const response = await fetch('http://localhost:3001/pqr/user');
+    
+          // Verifica si la respuesta es correcta
+          if (!response.ok) {
+            throw new Error('Error al obtener preguntas: ' + response.statusText); // Manejo de errores si la respuesta no es correcta
+          }
+    
+          const result = await response.json(); // Obtener el resultado en formato JSON
+          orderPreguntasById(result);
+          console.log('Datos obtenidos:', result); // Imprimir los datos obtenidos
+          return result; // Retornar la información de preguntas
+        } catch (error) {
+            console.error('Error:', error.message); // Loguear el error
+          throw new Error('Error en la solicitud: ' + error.message); // Manejo de errores
+        }
+      };
+
+
+      const orderPreguntasById = (preguntas) => {
+        const preguntasOrder = preguntas.sort((a, b) => a.id - b.id);
+        setPreguntas(preguntasOrder);
+      }
+    
+    
+      const handleEditPregunta = (id) => {
+        setIsEditModalOpen(true);
+        const pregunta = preguntas.find(pregunta => pregunta.id === id);
+        setEditPregunta(pregunta);
+      } 
+
+
+      const formatText = (text) => {
+        if (text == null) {
+          return text;
+        }
+        if (text.length > 30) {
+          return text.slice(0, 30) + '...';
+        }
+        return text;
+    };
+  
+    // paginador
+    // ... otros estados ...
+    const [paginaActual, setPaginaActual] = useState(1);
+    const preguntasPorPagina = 8; // Ajusta este número según necesites
+  
+    // Calcular productos para la página actual
+    const indiceUltimo = paginaActual * preguntasPorPagina;
+    const indicePrimero = indiceUltimo - preguntasPorPagina;
+    const preguntasActuales = preguntasFiltradas.slice(indicePrimero, indiceUltimo);
+    const totalPaginas = Math.ceil(preguntasFiltradas.length / preguntasPorPagina);
+  
+    const cambiarPagina = (numeroPagina) => {
+      setPaginaActual(numeroPagina);
+    };
+  
+
+
+
     return {
         userLoged,
         chatIsOpen,
         setChatIsOpen,
         register,
         handleSubmit,
-        onSubmit
+        onSubmit,
+
+
+
+
+        preguntas,
+        formatText,
+        isModalOpen,
+        setIsModalOpen,
+        handleEditPregunta,
+        isEditModalOpen,
+        setIsEditModalOpen,
+        editPregunta,
+        setEditPregunta,
+        busqueda,
+        setBusqueda,
+        preguntasFiltradas,
+        preguntasActuales,
+        paginaActual,
+        cambiarPagina,
+        totalPaginas
+
     }   
 }
 
