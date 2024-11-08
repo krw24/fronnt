@@ -16,7 +16,7 @@ const Tecnico = () => {
             <div className="w-24 h-screen bg-red-500">
                 <div className="w-full h-20 flex justify-center items-center bg-indigo-300"></div>
                 <div onClick={() => setView(0)} className="w-full h-24 flex justify-center items-center border-b-[1px] border-indigo-100 hover:opacity-60 cursor-pointer">
-                    <LuMessageSquarePlus className="text-5xl text-indigo-100" />
+                    
                 </div>
                 <div onClick={() => setView(1)} className="w-full h-20 flex justify-center items-center border-b-[1px] border-indigo-100 hover:opacity-60 cursor-pointer">
                     l

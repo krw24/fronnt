@@ -11,13 +11,12 @@ import { LuMessageSquarePlus } from "react-icons/lu";
 import Modal from "../../components/modal/Modal.js"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { IoMdEye } from "react-icons/io";
-
+import useFacturas from "./useFacturas";
+import { MdEdit } from "react-icons/md";
 
 const Preguntas = () => {
 
-
   const [view, setView] = useState(0);
-  
   
   const { 
     userLoged, 
@@ -40,7 +39,19 @@ const Preguntas = () => {
     paginaActual,
     cambiarPagina,
     totalPaginas
-  } = useQuestions({view});
+  } = useQuestions({ view });
+  
+  const {
+    facturasActuales,
+    paginaActualFactura,
+    cambiarPaginaFactura,
+    totalPaginasFactura,
+    getDataInit
+  } = useFacturas();
+
+
+ 
+
 
   const chatLogic = useChatClient(userLoged, chatIsOpen);
 
@@ -59,6 +70,9 @@ const Preguntas = () => {
           <LuMessageSquarePlus className="text-5xl text-indigo-100" />
         </div>
         <div onClick={() => setView(1)} className="w-full h-20 flex justify-center items-center border-b-[1px] border-indigo-100 hover:opacity-60 cursor-pointer">
+          <TiMessages className="text-5xl text-indigo-100" />
+        </div>
+        <div onClick={() => setView(2)} className="w-full h-20 flex justify-center items-center border-b-[1px] border-indigo-100 hover:opacity-60 cursor-pointer">
           <TiMessages className="text-5xl text-indigo-100" />
         </div>
         <div className="w-full h-24 flex justify-center items-center "></div>
@@ -332,6 +346,124 @@ const Preguntas = () => {
                                     null
                                 }
                             </div>
+            )
+          }
+          {
+            view === 2 &&
+            (
+
+              <div className="container mx-auto pt-6 flex flex-col gap-4">
+                <div className="w-full flex flex-row gap-2 items-center">
+                  <div className="relative flex flex-row gap-2 items-center">
+                    <FiSearch className="absolute left-2 text-2xl text-gray-500" />
+                    <input
+                      className="p-2 pl-10 pr-4 border-[1.5px] border-gray-300 rounded-2xl outline-none"
+                      type="text"
+                      placeholder="Buscar..."
+                      value={busqueda}
+                      onChange={(e) => setBusqueda(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="min-w-full overflow-y-auto shadow-lg mt-2 shadow-slate-300 rounded-lg">
+                  <table className="min-w-full table-auto bg-white  rounded-lg">
+                    <thead>
+                      <tr className="bg-gray-200 text-left text-gray-600 uppercase text-sm leading-normal">
+                        <th className="py-3 px-6">ID</th>
+                        <th className="py-3 px-6">Num factura</th>
+                        <th className="py-3 px-6">Fecha</th>
+                        <th className="py-3 px-6">Id cliente</th>
+                        <th className="py-3 px-6">Url</th>
+                        <th className="py-3 px-6">QR Url</th>
+                        <th className="py-3 px-6">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-gray-600 text-md  font-normal">
+                      {facturasActuales.map((factura) => (
+                        <tr
+                          key={factura.id}
+                          className="border-b border-gray-200 hover:bg-gray-100"
+                        >
+                          <td className="py-3 px-6 text-left whitespace-nowrap">
+                            {factura.id}
+                          </td>
+                          <td className="py-3 px-6 text-left">{factura.numero_factura}</td>
+                          <td className="py-3 px-6 text-left">{factura.fecha_emision}</td>
+                          <td className="py-3 px-6 text-left">{factura.cliente_id}</td>
+                          <td className="py-3 px-6 text-left">{factura.pdf_url}</td>
+                          <td className="py-3 px-6 text-left">{factura.qr_url}</td>
+                          <td className="py-3 px-6 text-left">{factura.estado}</td>
+                          
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="w-full flex justify-end">
+                  <div className="flex items-center gap-2 bg-white p-4 rounded-lg text-lg shadow">
+                    <button
+                      onClick={() => cambiarPagina(paginaActual - 1)}
+                      disabled={paginaActual === 1}
+                      className={`p-2 rounded-full ${paginaActual === 1
+                        ? 'text-gray-400 cursor-not-allowed'
+                        : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                        }`}
+                    >
+                      <IoIosArrowBack />
+                    </button>
+
+                    {(() => {
+                      let paginas = [];
+                      if (totalPaginasFactura <= 5) {
+                        // Si hay 5 o menos páginas, mostrar todas
+                        paginas = [...Array(totalPaginasFactura)].map((_, i) => i + 1);
+                      } else {
+                        // Si estamos en las primeras 3 páginas
+                        if (paginaActualFactura <= 3) {
+                          paginas = [1, 2, 3, '...', totalPaginasFactura];
+                        }
+                        // Si estamos en las últimas 3 páginas
+                        else if (paginaActualFactura >= totalPaginasFactura - 2) {
+                          paginas = [1, '...', totalPaginasFactura - 2, totalPaginasFactura - 1, totalPaginasFactura];
+                        }
+                        // Si estamos en medio
+                        else {
+                          paginas = [1, '...', paginaActualFactura, '...', totalPaginasFactura];
+                        }
+                      }
+
+                      return paginas.map((pagina, index) => (
+                        pagina === '...' ? (
+                          <span key={`dots-${index}`} className="px-2 text-gray-500">...</span>
+                        ) : (
+                          <button
+                            key={index}
+                            onClick={() => cambiarPaginaFactura(pagina)}
+                            className={`w-8 h-8 rounded-full ${paginaActualFactura === pagina
+                              ? 'bg-[#7F88D5] text-white'
+                              : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                              }`}
+                          >
+                            {pagina}
+                          </button>
+                        )
+                      ));
+                    })()}
+
+                    <button
+                      onClick={() => cambiarPagina(paginaActual + 1)}
+                      disabled={paginaActualFactura === totalPaginasFactura}
+                      className={`p-2 rounded-full ${paginaActualFactura === totalPaginasFactura
+                        ? 'text-gray-400 cursor-not-allowed'
+                        : 'text-[#7F88D5] hover:bg-[#7F88D5] hover:text-white'
+                        }`}
+                    >
+                      <IoIosArrowForward />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
             )
           }
             
